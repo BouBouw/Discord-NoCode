@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Play, Edit2, Trash2, Bot as BotIcon, FileText, Clock, Power, PowerOff, AlertCircle } from 'lucide-react';
 import { getWorkflows, deleteWorkflow, deployWorkflow } from '../services/workflowService.js';
-import { botAPI, apiRequest, type Bot } from '../services/api';
+import { botAPI, apiRequest, type Bot, type BotCreateData, type BotUpdateData } from '../services/api';
 import BotModal from '../components/BotModal';
 
 interface Workflow {
@@ -147,13 +147,13 @@ export default function DashboardPage() {
     setShowBotModal(true);
   }
 
-  async function handleSaveBot(data: any, id?: number) {
+  async function handleSaveBot(data: BotCreateData | BotUpdateData, id?: number) {
     if (id) {
-      await botAPI.update(id, data);
+      await botAPI.update(id, data as BotUpdateData);
       await loadData();
       alert('Bot updated successfully!');
     } else {
-      await botAPI.create(data);
+      await botAPI.create(data as BotCreateData);
       await loadData();
       alert('Bot created successfully!');
     }
