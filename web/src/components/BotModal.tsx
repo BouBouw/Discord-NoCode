@@ -47,13 +47,29 @@ export default function BotModal({ bot, workflows, onClose, onSave }: BotModalPr
       return;
     }
 
-    const data: BotCreateData | BotUpdateData = {
+    // Create proper data object based on whether we're editing or creating
+    const baseData = {
       name: name.trim(),
       ...(workflowId !== null && { workflow_id: workflowId }),
     };
 
-    if (!isEditing) {
-      (data as BotCreateData).discord_token = discordToken.trim();
+    let data: BotCreateData | BotUpdateData;
+
+    if (isEditing) {
+      // Editing: only send name and workflow_id
+      data = {
+        ...baseData,
+        name: baseData.name,
+        ...(baseData.workflow_id !== undefined && { workflow_id: baseData.workflow_id }),
+      };
+    } else {
+      // Creating: include discord_token
+      data = {
+        ...baseData,
+        name: baseData.name,
+        discord_token: discordToken.trim(),
+        ...(baseData.workflow_id !== undefined && { workflow_id: baseData.workflow_id }),
+      };
     }
 
     setLoading(true);
@@ -62,7 +78,8 @@ export default function BotModal({ bot, workflows, onClose, onSave }: BotModalPr
       onClose();
     } catch (error) {
       console.error('Failed to save bot:', error);
-      alert('Failed to save bot');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save bot';
+      alert(`Failed to save bot: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

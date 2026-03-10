@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Play, Edit2, Trash2, Bot as BotIcon, FileText, Clock, Power, PowerOff, AlertCircle } from 'lucide-react';
 import { getWorkflows, deleteWorkflow, deployWorkflow } from '../services/workflowService.js';
-import { botAPI, apiRequest, type Bot, type BotCreateData, type BotUpdateData } from '../services/api';
+import { botAPI, type Bot, type BotCreateData, type BotUpdateData } from '../services/api';
 import BotModal from '../components/BotModal';
 
 interface Workflow {
@@ -40,11 +40,13 @@ interface BotItemProps {
   onDelete: () => void;
 }
 
+type LoadingState = 'delete' | 'deploy' | 'start' | 'stop' | null;
+
 export default function DashboardPage() {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [bots, setBots] = useState<Bot[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingStates, setLoadingStates] = useState<Record<number, 'delete' | 'start' | 'stop' | null>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<number, LoadingState>>({});
   const [showBotModal, setShowBotModal] = useState(false);
   const [editingBot, setEditingBot] = useState<Bot | null>(null);
   const navigate = useNavigate();
@@ -58,13 +60,14 @@ export default function DashboardPage() {
       setLoading(true);
       const [workflowsData, botsData] = await Promise.all([
         getWorkflows(),
-        apiRequest('/bots'),
+        botAPI.list(),
       ]);
       setWorkflows(workflowsData);
       setBots(botsData);
     } catch (error) {
       console.error('Failed to load data:', error);
-      alert('Failed to load dashboard data');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load dashboard data';
+      alert(`Failed to load dashboard data: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -73,27 +76,29 @@ export default function DashboardPage() {
   async function handleDelete(id: number) {
     if (!confirm('Are you sure you want to delete this workflow?')) return;
 
-    setLoadingStates(prev => ({ ...prev, [id]: 'delete' } as any));
+    setLoadingStates(prev => ({ ...prev, [id]: 'delete' }));
     try {
       await deleteWorkflow(id);
       await loadData();
     } catch (error) {
       console.error('Failed to delete workflow:', error);
-      alert('Failed to delete workflow');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete workflow';
+      alert(`Failed to delete workflow: ${errorMessage}`);
     } finally {
       setLoadingStates(prev => ({ ...prev, [id]: null }));
     }
   }
 
   async function handleDeploy(id: number) {
-    setLoadingStates(prev => ({ ...prev, [id]: 'deploy' } as any));
+    setLoadingStates(prev => ({ ...prev, [id]: 'deploy' }));
     try {
       await deployWorkflow(id);
       await loadData();
       alert('Workflow deployed successfully!');
     } catch (error) {
       console.error('Failed to deploy workflow:', error);
-      alert('Failed to deploy workflow');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to deploy workflow';
+      alert(`Failed to deploy workflow: ${errorMessage}`);
     } finally {
       setLoadingStates(prev => ({ ...prev, [id]: null }));
     }
@@ -108,7 +113,8 @@ export default function DashboardPage() {
       await loadData();
     } catch (error) {
       console.error('Failed to delete bot:', error);
-      alert('Failed to delete bot');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete bot';
+      alert(`Failed to delete bot: ${errorMessage}`);
     } finally {
       setLoadingStates(prev => ({ ...prev, [id]: null }));
     }
@@ -122,7 +128,8 @@ export default function DashboardPage() {
       alert('Bot started successfully!');
     } catch (error) {
       console.error('Failed to start bot:', error);
-      alert('Failed to start bot');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start bot';
+      alert(`Failed to start bot: ${errorMessage}`);
     } finally {
       setLoadingStates(prev => ({ ...prev, [id]: null }));
     }
@@ -136,7 +143,8 @@ export default function DashboardPage() {
       alert('Bot stopped successfully!');
     } catch (error) {
       console.error('Failed to stop bot:', error);
-      alert('Failed to stop bot');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to stop bot';
+      alert(`Failed to stop bot: ${errorMessage}`);
     } finally {
       setLoadingStates(prev => ({ ...prev, [id]: null }));
     }
@@ -148,14 +156,31 @@ export default function DashboardPage() {
   }
 
   async function handleSaveBot(data: BotCreateData | BotUpdateData, id?: number) {
-    if (id) {
-      await botAPI.update(id, data as BotUpdateData);
-      await loadData();
-      alert('Bot updated successfully!');
-    } else {
-      await botAPI.create(data as BotCreateData);
-      await loadData();
-      alert('Bot created successfully!');
+    try {
+      if (id) {
+        // Editing: validate that data is valid for update
+        const updateData: BotUpdateData = {
+          name: 'name' in data ? data.name : undefined,
+          workflow_id: 'workflow_id' in data ? data.workflow_id : undefined,
+        };
+        await botAPI.update(id, updateData);
+        await loadData();
+        alert('Bot updated successfully!');
+      } else {
+        // Creating: validate that data includes discord_token
+        if ('discord_token' in data && data.discord_token) {
+          await botAPI.create(data as BotCreateData);
+          await loadData();
+          alert('Bot created successfully!');
+        } else {
+          throw new Error('Discord token is required for creating a bot');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to save bot:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save bot';
+      alert(`Failed to save bot: ${errorMessage}`);
+      throw error; // Re-throw to let the modal handle it
     }
   }
 
@@ -230,7 +255,11 @@ export default function DashboardPage() {
                 <BotItem
                   key={bot.id}
                   bot={bot}
-                  loading={loadingStates[bot.id]}
+                  loading={(
+                    loadingStates[bot.id] === 'delete' ||
+                    loadingStates[bot.id] === 'start' ||
+                    loadingStates[bot.id] === 'stop'
+                  ) ? loadingStates[bot.id] as 'delete' | 'start' | 'stop' | null : null}
                   onStart={() => handleStartBot(bot.id)}
                   onStop={() => handleStopBot(bot.id)}
                   onEdit={() => openBotModal(bot)}
@@ -301,7 +330,7 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ icon, title, value, color, total }: StatCardProps) {
+const StatCard = memo(function StatCard({ icon, title, value, color, total }: StatCardProps) {
   const colorClasses = {
     blue: 'bg-blue-100 text-blue-600',
     green: 'bg-green-100 text-green-600',
@@ -320,9 +349,9 @@ function StatCard({ icon, title, value, color, total }: StatCardProps) {
       <p className="text-slate-600 mt-1">{title}</p>
     </div>
   );
-}
+});
 
-function WorkflowItem({ workflow, loading, onEdit, onDelete, onDeploy }: WorkflowItemProps & { loading?: 'delete' | 'deploy' | null }) {
+const WorkflowItem = memo(function WorkflowItem({ workflow, loading, onEdit, onDelete, onDeploy }: WorkflowItemProps & { loading?: 'delete' | 'deploy' | null }) {
   const isDeleting = loading === 'delete';
   const isDeploying = loading === 'deploy';
 
@@ -377,9 +406,9 @@ function WorkflowItem({ workflow, loading, onEdit, onDelete, onDeploy }: Workflo
       </div>
     </div>
   );
-}
+});
 
-function BotItem({ bot, loading, onStart, onStop, onEdit, onDelete }: BotItemProps) {
+const BotItem = memo(function BotItem({ bot, loading, onStart, onStop, onEdit, onDelete }: BotItemProps) {
   const isDeleting = loading === 'delete';
   const isStarting = loading === 'start';
   const isStopping = loading === 'stop';
@@ -460,4 +489,4 @@ function BotItem({ bot, loading, onStart, onStop, onEdit, onDelete }: BotItemPro
       </div>
     </div>
   );
-}
+});
