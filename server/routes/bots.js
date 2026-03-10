@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
-import { listBots, getBot, createBotHandler, updateBotHandler, deleteBotHandler, startBot, stopBot } from '../controllers/botController.js';
+import { listBots, getBot, createBotHandler, updateBotHandler, deleteBotHandler, startBot, stopBot, getBotContainerStatus, getBotLogs, listAllContainers } from '../controllers/botController.js';
 
 const router = express.Router();
 
@@ -24,5 +24,14 @@ router.post('/:id/start', authenticate, startBot);
 
 // POST /api/bots/:id/stop - Stop a bot
 router.post('/:id/stop', authenticate, stopBot);
+
+// GET /api/bots/:id/status - Get bot container status
+router.get('/:id/status', authenticate, getBotContainerStatus);
+
+// GET /api/bots/:id/logs - Get bot container logs
+router.get('/:id/logs', authenticate, getBotLogs);
+
+// GET /api/bots/containers - List all bot containers (admin only)
+router.get('/containers', authenticate, listAllContainers);
 
 export default router;
