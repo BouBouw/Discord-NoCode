@@ -1,10 +1,9 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
+import { getProfile } from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.get('/me', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
+router.get('/me', authenticate, getProfile);
 
 export default router;
