@@ -1,14 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { AuthProvider } from '../contexts/AuthContext.jsx';
-import MainLayout from '../layouts/MainLayout.jsx';
+import { AuthProvider } from '../contexts/AuthContext';
+import MainLayout from '../layouts/MainLayout';
 
 // Pages (to be created)
-import LandingPage from '../pages/LandingPage.jsx';
-import LoginPage from '../pages/LoginPage.jsx';
-import RegisterPage from '../pages/RegisterPage.jsx';
-import DashboardPage from '../pages/DashboardPage.jsx';
-import WorkflowEditorPage from '../pages/WorkflowEditorPage.jsx';
-import ProtectedRoute from '../components/ProtectedRoute.jsx';
+import LandingPage from '../pages/LandingPage';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import DashboardPage from '../pages/DashboardPage';
+import WorkflowEditorPage from '../pages/WorkflowEditorPage';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
