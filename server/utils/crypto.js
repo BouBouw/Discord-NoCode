@@ -5,6 +5,11 @@ const ALGORITHM = 'aes-256-cbc';
 const KEY = process.env.ENCRYPTION_KEY?.padEnd(32, '0').substring(0, 32);
 const IV_LENGTH = 16;
 
+// Add this validation
+if (!process.env.ENCRYPTION_KEY || process.env.ENCRYPTION_KEY.length < 32) {
+  throw new Error('ENCRYPTION_KEY environment variable must be at least 32 characters');
+}
+
 export function encrypt(text) {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, KEY, iv);
