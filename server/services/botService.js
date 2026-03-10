@@ -1,35 +1,49 @@
 import db from '../config/database.js';
 import { encrypt, decrypt } from '../utils/crypto.js';
 import { MAX_BOTS_PER_USER, BOT_STATUS } from '../config/constants.js';
+import { ValidationError, NotFoundError, LimitExceededError, DatabaseError } from '../utils/errors.js';
 
 export async function createBot(userId, name, discordToken, workflowId) {
   // Validate required fields
   if (!name || name.trim().length === 0) {
-    throw new Error('Bot name is required');
+    throw new ValidationError('Bot name is required');
   }
 
   if (!discordToken || discordToken.trim().length === 0) {
-    throw new Error('Discord token is required');
+    throw new ValidationError('Discord token is required');
   }
 
-  // Check bot limit
-  const [countRows] = await db.execute(
-    'SELECT COUNT(*) as count FROM bots WHERE user_id = ?',
-    [userId]
-  );
+  // Validate workflow ID if provided
+  if (workflowId !== null && workflowId !== undefined) {
+    const [workflowRows] = await db.execute(
+      'SELECT id FROM workflows WHERE id = ? AND user_id = ?',
+      [workflowId, userId]
+    );
 
-  const botCount = countRows[0].count;
-  if (botCount >= MAX_BOTS_PER_USER) {
-    throw new Error(`Maximum ${MAX_BOTS_PER_USER} bots allowed per user`);
+    if (workflowRows.length === 0) {
+      throw new ValidationError('Workflow not found or does not belong to user');
+    }
   }
-
-  // Encrypt the Discord token
-  const encryptedToken = encrypt(discordToken);
 
   const connection = await db.getConnection();
 
   try {
     await connection.beginTransaction();
+
+    // Check bot limit within transaction to prevent race condition
+    const [countRows] = await connection.execute(
+      'SELECT COUNT(*) as count FROM bots WHERE user_id = ? FOR UPDATE',
+      [userId]
+    );
+
+    const botCount = countRows[0].count;
+    if (botCount >= MAX_BOTS_PER_USER) {
+      await connection.rollback();
+      throw new LimitExceededError(`Maximum ${MAX_BOTS_PER_USER} bots allowed per user`);
+    }
+
+    // Encrypt the Discord token
+    const encryptedToken = encrypt(discordToken);
 
     const [result] = await connection.execute(
       'INSERT INTO bots (user_id, name, discord_token, status, workflow_id) VALUES (?, ?, ?, ?, ?)',
@@ -41,7 +55,14 @@ export async function createBot(userId, name, discordToken, workflowId) {
   } catch (error) {
     await connection.rollback();
     console.error('Error creating bot:', error);
-    throw error;
+
+    // Re-throw custom errors as-is
+    if (error.code) {
+      throw error;
+    }
+
+    // Wrap database errors
+    throw new DatabaseError('Failed to create bot');
   } finally {
     connection.release();
   }
@@ -91,22 +112,46 @@ export async function getBotWithToken(id, userId) {
     };
   } catch (error) {
     console.error('Error decrypting bot token:', error);
-    throw new Error('Failed to decrypt bot token');
+    throw new DatabaseError('Failed to decrypt bot token');
   }
 }
 
 export async function updateBot(id, userId, name, workflowId) {
   if (!name || name.trim().length === 0) {
-    throw new Error('Bot name is required');
+    throw new ValidationError('Bot name is required');
   }
 
-  const [result] = await db.execute(
-    'UPDATE bots SET name = ?, workflow_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?',
-    [name, workflowId || null, id, userId]
-  );
+  // Validate workflow ID if provided
+  if (workflowId !== null && workflowId !== undefined) {
+    const [workflowRows] = await db.execute(
+      'SELECT id FROM workflows WHERE id = ? AND user_id = ?',
+      [workflowId, userId]
+    );
 
-  if (result.affectedRows === 0) {
-    throw new Error('Bot not found');
+    if (workflowRows.length === 0) {
+      throw new ValidationError('Workflow not found or does not belong to user');
+    }
+  }
+
+  try {
+    const [result] = await db.execute(
+      'UPDATE bots SET name = ?, workflow_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?',
+      [name, workflowId || null, id, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      throw new NotFoundError('Bot not found');
+    }
+  } catch (error) {
+    console.error('Error updating bot:', error);
+
+    // Re-throw custom errors as-is
+    if (error.code) {
+      throw error;
+    }
+
+    // Wrap database errors
+    throw new DatabaseError('Failed to update bot');
   }
 }
 
@@ -114,16 +159,28 @@ export async function updateBotStatus(id, userId, status) {
   // Validate status
   const validStatuses = [BOT_STATUS.ACTIVE, BOT_STATUS.STOPPED, BOT_STATUS.ERRORED];
   if (!validStatuses.includes(status)) {
-    throw new Error('Invalid bot status');
+    throw new ValidationError('Invalid bot status');
   }
 
-  const [result] = await db.execute(
-    'UPDATE bots SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?',
-    [status, id, userId]
-  );
+  try {
+    const [result] = await db.execute(
+      'UPDATE bots SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?',
+      [status, id, userId]
+    );
 
-  if (result.affectedRows === 0) {
-    throw new Error('Bot not found');
+    if (result.affectedRows === 0) {
+      throw new NotFoundError('Bot not found');
+    }
+  } catch (error) {
+    console.error('Error updating bot status:', error);
+
+    // Re-throw custom errors as-is
+    if (error.code) {
+      throw error;
+    }
+
+    // Wrap database errors
+    throw new DatabaseError('Failed to update bot status');
   }
 }
 
@@ -148,12 +205,19 @@ export async function deleteBot(id, userId) {
     await connection.commit();
 
     if (result.affectedRows === 0) {
-      throw new Error('Bot not found');
+      throw new NotFoundError('Bot not found');
     }
   } catch (error) {
     await connection.rollback();
     console.error('Error deleting bot:', error);
-    throw error;
+
+    // Re-throw custom errors as-is
+    if (error.code) {
+      throw error;
+    }
+
+    // Wrap database errors
+    throw new DatabaseError('Failed to delete bot');
   } finally {
     connection.release();
   }
