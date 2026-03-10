@@ -3,7 +3,6 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import zod from 'zod';
 import { initDatabase } from './config/database.js';
 import { initWebSocket } from './websocket/index.js';
 import authRoutes from './routes/auth.js';
@@ -14,18 +13,6 @@ import errorHandler from './middleware/error.js';
 
 dotenv.config();
 
-// Add this validation middleware
-function validateRequest(req, res, next) {
-  if (req.body && Object.keys(req.body).length > 0) {
-    try {
-      zod.object({}).safeParse(req.body);
-    } catch (error) {
-      return res.status(400).json({ error: 'Invalid request body' });
-    }
-  }
-  next();
-}
-
 const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 3000;
@@ -33,7 +20,6 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(validateRequest); // Add this line
 
 // Routes
 app.use('/api/auth', authRoutes);
