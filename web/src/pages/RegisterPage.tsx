@@ -32,7 +32,7 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const data = await authAPI.login(email, password);
+      const data = await authAPI.register(email, password);
       login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {
