@@ -34,3 +34,51 @@ export const authAPI = {
     }),
   getProfile: () => apiRequest('/users/me'),
 };
+
+export interface Bot {
+  id: number;
+  name: string;
+  discord_token: string;
+  workflow_id: number | null;
+  status: 'idle' | 'running' | 'stopped' | 'error';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BotCreateData {
+  name: string;
+  discord_token: string;
+  workflow_id?: number;
+}
+
+export interface BotUpdateData {
+  name?: string;
+  workflow_id?: number;
+}
+
+export const botAPI = {
+  list: (): Promise<Bot[]> => apiRequest('/bots'),
+  get: (id: number): Promise<Bot> => apiRequest(`/bots/${id}`),
+  create: (data: BotCreateData): Promise<Bot> =>
+    apiRequest('/bots', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  update: (id: number, data: BotUpdateData): Promise<Bot> =>
+    apiRequest(`/bots/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+  delete: (id: number): Promise<void> =>
+    apiRequest(`/bots/${id}`, {
+      method: 'DELETE',
+    }),
+  start: (id: number): Promise<void> =>
+    apiRequest(`/bots/${id}/start`, {
+      method: 'POST',
+    }),
+  stop: (id: number): Promise<void> =>
+    apiRequest(`/bots/${id}/stop`, {
+      method: 'POST',
+    }),
+};
