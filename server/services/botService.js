@@ -70,7 +70,7 @@ export async function createBot(userId, name, discordToken, workflowId) {
 
 export async function getBotsByUser(userId) {
   const [rows] = await db.execute(
-    'SELECT id, user_id, name, status, workflow_id, created_at FROM bots WHERE user_id = ? ORDER BY created_at DESC',
+    'SELECT id, user_id, name, status, workflow_id, port, db_port, created_at, started_at FROM bots WHERE user_id = ? ORDER BY created_at DESC',
     [userId]
   );
 
@@ -79,7 +79,7 @@ export async function getBotsByUser(userId) {
 
 export async function getBotById(id, userId) {
   const [rows] = await db.execute(
-    'SELECT id, user_id, name, status, workflow_id, created_at FROM bots WHERE id = ? AND user_id = ?',
+    'SELECT id, user_id, name, status, workflow_id, port, created_at FROM bots WHERE id = ? AND user_id = ?',
     [id, userId]
   );
 
@@ -116,12 +116,25 @@ export async function getBotWithToken(id, userId) {
   }
 }
 
-export async function updateBot(id, userId, name, workflowId) {
-  if (!name || name.trim().length === 0) {
-    throw new ValidationError('Bot name is required');
+/**
+ * Get a bot by its assigned workflow ID, with decrypted Discord token.
+ * Used by the deploy endpoint to restart the right container.
+ */
+export async function getBotByWorkflowIdWithToken(workflowId, userId) {
+  const [rows] = await db.execute(
+    'SELECT * FROM bots WHERE workflow_id = ? AND user_id = ?',
+    [workflowId, userId]
+  );
+  if (rows.length === 0) return null;
+  const bot = rows[0];
+  try {
+    return { ...bot, discord_token: decrypt(bot.discord_token) };
+  } catch {
+    throw new DatabaseError('Failed to decrypt bot token');
   }
+}
 
-  // Validate workflow ID if provided
+export async function updateBot(id, userId, name, workflowId, discordToken) {
   if (workflowId !== null && workflowId !== undefined) {
     const [workflowRows] = await db.execute(
       'SELECT id FROM workflows WHERE id = ? AND user_id = ?',
@@ -133,10 +146,37 @@ export async function updateBot(id, userId, name, workflowId) {
     }
   }
 
+  // Build dynamic SET clause — only update fields that were provided
+  const fields = [];
+  const values = [];
+
+  if (name !== undefined) {
+    if (name.trim().length === 0) throw new ValidationError('Bot name is required');
+    fields.push('name = ?');
+    values.push(name);
+  }
+
+  if (workflowId !== undefined) {
+    fields.push('workflow_id = ?');
+    values.push(workflowId ?? null);
+  }
+
+  if (discordToken !== undefined) {
+    if (discordToken.trim().length === 0) throw new ValidationError('Discord token cannot be empty');
+    fields.push('discord_token = ?');
+    values.push(encrypt(discordToken));
+  }
+
+  if (fields.length === 0) {
+    throw new ValidationError('No fields to update');
+  }
+
+  values.push(id, userId);
+
   try {
     const [result] = await db.execute(
-      'UPDATE bots SET name = ?, workflow_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?',
-      [name, workflowId || null, id, userId]
+      `UPDATE bots SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`,
+      values
     );
 
     if (result.affectedRows === 0) {

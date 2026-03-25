@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm start:*)",
+      "Bash(dir \"C:\\\\Users\\\\samy7\\\\AppData\\\\Local\\\\Temp\\\\claude\")",
+      "Bash(dir \"C:\\\\Users\\\\samy7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-samy7-Documents-GitHub-Discord-NoCode\\\\tasks\")",
+      "Bash(JWT_SECRET=your-super-secret-jwt-key-change-this-in-production npm start)",
+      "Bash(JWT_SECRET=your-super-secret-jwt-key-change-this-in-production JWT_REFRESH_SECRET=your-super-secret-refresh-jwt-key-change-this-in-production npm start)",
+      "Bash(JWT_SECRET=your-super-secret-jwt-key-change-this-in-production JWT_REFRESH_SECRET=your-super-secret-refresh-jwt-key-change-this-in-production ENCRYPTION_KEY=this-is-a-32-character-encryption-key-12345 npm start)",
+      "Bash(mysql -u root -e \"CREATE DATABASE IF NOT EXISTS discord_nocode;\")",
+      "Bash(npm run:*)",
+      "Bash(JWT_SECRET=test-secret-key JWT_REFRESH_SECRET=test-refresh-secret-key ENCRYPTION_KEY=12345678901234567890123456789012 npm run dev)",
+      "WebSearch",
+      "Bash(npm audit:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm view:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git -C \"c:\\\\Users\\\\samy7\\\\Documents\\\\GitHub\\\\Discord-NoCode\" log --oneline -5)",
+      "Bash(uipro init:*)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"SaaS discord bot platform developer tool\" --design-system -p \"Discord-NoCode\")",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility\" --domain ux)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"landing page cta hero\" --domain landing)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"responsive layout form\" --stack html-tailwind)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"SaaS discord bot platform developer tool\" --design-system --persist -p \"Discord-NoCode\")",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"saas discord bot platform developer tool\" --design-system -p \"Discord-NoCode\" -f markdown)"
+    ]
+  }
+}

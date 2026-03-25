@@ -4,9 +4,15 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom'
 
 import router from './router/index'
+import { ToastProvider } from './contexts/ToastContext'
+import { UserPrefsProvider } from './contexts/UserPrefsContext'
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserPrefsProvider>
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
+    </UserPrefsProvider>
   </StrictMode>,
 )

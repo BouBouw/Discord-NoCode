@@ -1,37 +1,52 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
-import { listBots, getBot, createBotHandler, updateBotHandler, deleteBotHandler, startBot, stopBot, getBotContainerStatus, getBotLogs, listAllContainers } from '../controllers/botController.js';
+import { attachPlan, checkBotLimit } from '../middleware/planLimits.js';
+import {
+  listBots, getBot, createBotHandler, updateBotHandler, deleteBotHandler,
+  startBot, stopBot, getBotContainerStatus, getBotLogs, listAllContainers,
+  getDbStatus,
+} from '../controllers/botController.js';
+import * as db from '../controllers/dbController.js';
+import { getContainerResources } from '../controllers/statsController.js';
 
 const router = express.Router();
 
-// GET /api/bots - List all bots for the authenticated user
-router.get('/', authenticate, listBots);
-
-// GET /api/bots/:id - Get a specific bot by ID
+// ─── Bot CRUD ──────────────────────────────────────────────────────────────
+router.get('/',    authenticate, listBots);
 router.get('/:id', authenticate, getBot);
-
-// POST /api/bots - Create a new bot
-router.post('/', authenticate, createBotHandler);
-
-// PUT /api/bots/:id - Update a bot
+router.post('/',   authenticate, attachPlan, checkBotLimit, createBotHandler);
 router.put('/:id', authenticate, updateBotHandler);
-
-// DELETE /api/bots/:id - Delete a bot
 router.delete('/:id', authenticate, deleteBotHandler);
 
-// POST /api/bots/:id/start - Start a bot
-router.post('/:id/start', authenticate, startBot);
+// ─── Bot lifecycle ─────────────────────────────────────────────────────────
+router.post('/:id/start',   authenticate, startBot);
+router.post('/:id/stop',    authenticate, stopBot);
+router.get('/:id/status',   authenticate, getBotContainerStatus);
+router.get('/:id/logs',     authenticate, getBotLogs);
+router.get('/containers',   authenticate, listAllContainers);
+router.get('/:id/resources', authenticate, getContainerResources);
 
-// POST /api/bots/:id/stop - Stop a bot
-router.post('/:id/stop', authenticate, stopBot);
+// ─── DB status (MySQL is inside the bot container) ────────────────────────
+router.get('/:id/db/status', authenticate, getDbStatus);
 
-// GET /api/bots/:id/status - Get bot container status
-router.get('/:id/status', authenticate, getBotContainerStatus);
+// ─── DB Visualizer — Tables ───────────────────────────────────────────────
+router.get('/:id/db/tables',              authenticate, db.listTables);
+router.post('/:id/db/tables',             authenticate, db.createTable);
+router.delete('/:id/db/tables/:table',    authenticate, db.dropTable);
 
-// GET /api/bots/:id/logs - Get bot container logs
-router.get('/:id/logs', authenticate, getBotLogs);
+// ─── DB Visualizer — Structure ────────────────────────────────────────────
+router.get('/:id/db/tables/:table/structure',          authenticate, db.getTableStructure);
+router.post('/:id/db/tables/:table/columns',           authenticate, db.addColumn);
+router.delete('/:id/db/tables/:table/columns/:column', authenticate, db.dropColumn);
 
-// GET /api/bots/containers - List all bot containers (admin only)
-router.get('/containers', authenticate, listAllContainers);
+// ─── DB Visualizer — Rows ────────────────────────────────────────────────
+router.get('/:id/db/tables/:table/rows',    authenticate, db.getTableRows);
+router.post('/:id/db/tables/:table/rows',   authenticate, db.insertRow);
+router.put('/:id/db/tables/:table/rows',    authenticate, db.updateRow);
+router.delete('/:id/db/tables/:table/rows', authenticate, db.deleteRow);
+
+// ─── DB Visualizer — SQL runner + Purge ──────────────────────────────────
+router.post('/:id/db/query', authenticate, db.executeQuery);
+router.post('/:id/db/purge', authenticate, db.purgeDb);
 
 export default router;

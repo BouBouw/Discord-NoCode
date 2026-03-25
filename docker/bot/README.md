@@ -1,0 +1,1 @@
+bot exemple - initialize with docker & integration workflows in bot

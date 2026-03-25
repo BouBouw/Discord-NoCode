@@ -1,4 +1,4 @@
-# Discord NoCode Bot Builder Implementation Plan
+# DisFlow Bot Builder Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
@@ -920,7 +920,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <Bot className="w-8 h-8" />
-            <span className="text-xl font-bold">Discord NoCode</span>
+            <span className="text-xl font-bold">DisFlow</span>
           </Link>
 
           <div className="flex items-center space-x-4">

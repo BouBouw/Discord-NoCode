@@ -1,30 +1,15 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
+import { attachPlan, checkWorkflowLimits } from '../middleware/planLimits.js';
+import * as workflowController from '../controllers/workflowController.js';
 
 const router = express.Router();
 
-router.get('/', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
-
-router.post('/', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
-
-router.get('/:id', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
-
-router.put('/:id', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
-
-router.delete('/:id', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
-
-router.post('/:id/deploy', authenticate, (req, res) => {
-  res.status(501).json({ error: 'Not implemented yet' });
-});
+router.get('/', authenticate, workflowController.list);
+router.post('/', authenticate, attachPlan, checkWorkflowLimits, workflowController.create);
+router.get('/:id', authenticate, workflowController.get);
+router.put('/:id', authenticate, attachPlan, checkWorkflowLimits, workflowController.update);
+router.delete('/:id', authenticate, workflowController.deleteOne);
+router.post('/:id/deploy', authenticate, workflowController.deploy);
 
 export default router;

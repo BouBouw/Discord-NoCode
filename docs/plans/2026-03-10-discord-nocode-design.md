@@ -1,4 +1,4 @@
-# Discord NoCode Bot Builder - Design Document
+# DisFlow Bot Builder - Design Document
 
 **Date**: 2026-03-10
 **Auteur**: Claude Sonnet 4.6

@@ -1,36 +1,43 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Bot as BotIcon, Zap, Settings } from 'lucide-react';
+import { useToast } from '../contexts/ToastContext';
+import { useNavigate } from 'react-router-dom';
 import type { Bot, BotCreateData, BotUpdateData } from '../services/api';
+import { loadUserSettings } from '../hooks/useUserSettings';
+import { useTranslation } from '../hooks/useTranslation';
 
-interface Workflow {
-  id: number;
-  name: string;
-}
+const LANGUAGE_LABELS: Record<string, string> = {
+  fr: '🇫🇷 Français', en: '🇬🇧 English', es: '🇪🇸 Español', de: '🇩🇪 Deutsch', pt: '🇧🇷 Português',
+};
+const THEME_LABELS: Record<string, string> = {
+  dark: '🌑 Sombre', orange: '🟠 Orange', blurple: '💙 Blurple', green: '🟢 Vert', light: '☀️ Clair',
+};
 
 interface BotModalProps {
   bot: Bot | null;
-  workflows: Workflow[];
+  workflows: never[];
   onClose: () => void;
   onSave: (data: BotCreateData | BotUpdateData, id?: number) => Promise<void>;
 }
 
-export default function BotModal({ bot, workflows, onClose, onSave }: BotModalProps) {
+export default function BotModal({ bot, onClose, onSave }: BotModalProps) {
   const [name, setName] = useState('');
   const [discordToken, setDiscordToken] = useState('');
-  const [workflowId, setWorkflowId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const navigate = useNavigate();
+  const defaults = loadUserSettings();
+  const { t } = useTranslation();
 
   const isEditing = !!bot;
 
   useEffect(() => {
     if (bot) {
       setName(bot.name);
-      setDiscordToken(''); // Don't show token for security
-      setWorkflowId(bot.workflow_id);
+      setDiscordToken('');
     } else {
       setName('');
       setDiscordToken('');
-      setWorkflowId(null);
     }
   }, [bot]);
 
@@ -38,38 +45,24 @@ export default function BotModal({ bot, workflows, onClose, onSave }: BotModalPr
     e.preventDefault();
 
     if (!name.trim()) {
-      alert('Bot name is required');
+      toast('warning', t.botModal.nameRequired);
       return;
     }
 
     if (!isEditing && !discordToken.trim()) {
-      alert('Discord token is required for new bots');
+      toast('warning', t.botModal.tokenRequired);
       return;
     }
-
-    // Create proper data object based on whether we're editing or creating
-    const baseData = {
-      name: name.trim(),
-      ...(workflowId !== null && { workflow_id: workflowId }),
-    };
 
     let data: BotCreateData | BotUpdateData;
 
     if (isEditing) {
-      // Editing: only send name and workflow_id
-      data = {
-        ...baseData,
-        name: baseData.name,
-        ...(baseData.workflow_id !== undefined && { workflow_id: baseData.workflow_id }),
-      };
+      data = { name: name.trim() } as BotUpdateData;
+      if (discordToken.trim()) {
+        (data as BotUpdateData).discordToken = discordToken.trim();
+      }
     } else {
-      // Creating: include discord_token
-      data = {
-        ...baseData,
-        name: baseData.name,
-        discord_token: discordToken.trim(),
-        ...(baseData.workflow_id !== undefined && { workflow_id: baseData.workflow_id }),
-      };
+      data = { name: name.trim(), discordToken: discordToken.trim() };
     }
 
     setLoading(true);
@@ -79,101 +72,139 @@ export default function BotModal({ bot, workflows, onClose, onSave }: BotModalPr
     } catch (error) {
       console.error('Failed to save bot:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to save bot';
-      alert(`Failed to save bot: ${errorMessage}`);
+      toast('error', `${t.botModal.saveFailed} ${errorMessage}`);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h2 className="text-xl font-bold text-slate-900">
-            {isEditing ? 'Edit Bot' : 'Create New Bot'}
-          </h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
+      <div
+        className="rounded-2xl shadow-2xl w-full max-w-md mx-4"
+        style={{ backgroundColor: 'var(--t-s)', border: '1px solid var(--t-bd)' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid var(--t-bd)' }}>
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: 'var(--t-aa)' }}
+            >
+              <BotIcon className="w-4 h-4" style={{ color: 'var(--t-a)' }} />
+            </div>
+            <h2 className="font-semibold" style={{ color: 'var(--t-tx)' }}>
+              {isEditing ? t.botModal.editInstance : t.botModal.newInstance}
+            </h2>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition"
+            className="dnc-btn-icon w-7 h-7"
+            style={{ color: 'var(--t-m)' }}
           >
-            <X className="w-5 h-5 text-slate-600" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Bot Name <span className="text-red-500">*</span>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--t-sub)' }}>
+              {t.botModal.instanceName} <span style={{ color: '#ef4444' }}>*</span>
             </label>
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="My Awesome Bot"
+              onChange={e => setName(e.target.value)}
+              className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
+              style={{ backgroundColor: 'var(--t-s2)', border: '1px solid var(--t-bd)', color: 'var(--t-tx)' }}
+              placeholder={t.botModal.namePlaceholder}
               required
+              onFocus={e => (e.currentTarget.style.borderColor = 'var(--t-a)')}
+              onBlur={e => (e.currentTarget.style.borderColor = 'var(--t-bd)')}
             />
           </div>
 
+          {/* Discord Token */}
+          <div>
+            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--t-sub)' }}>
+              {t.botModal.discordToken}{' '}
+              {!isEditing && <span style={{ color: '#ef4444' }}>*</span>}
+            </label>
+            <input
+              type="password"
+              value={discordToken}
+              onChange={e => setDiscordToken(e.target.value)}
+              className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none font-mono"
+              style={{ backgroundColor: 'var(--t-s2)', border: '1px solid var(--t-bd)', color: 'var(--t-tx)' }}
+              placeholder={isEditing ? t.botModal.tokenUpdateHint : 'MTAw...'}
+              required={!isEditing ? true : undefined}
+              onFocus={e => (e.currentTarget.style.borderColor = 'var(--t-a)')}
+              onBlur={e => (e.currentTarget.style.borderColor = 'var(--t-bd)')}
+            />
+            <p className="text-xs mt-1.5" style={{ color: 'var(--t-m)' }}>
+              {isEditing
+                ? t.botModal.tokenUpdateHelp
+                : (<>{t.botModal.tokenHelp.split('Discord Developer Portal')[0]}
+                    <a
+                      href="https://discord.com/developers/applications"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'var(--t-a)' }}
+                    >
+                      Discord Developer Portal
+                    </a>
+                  </>)
+              }
+            </p>
+          </div>
+
+          {/* Defaults applied banner (creation only) */}
           {!isEditing && (
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Discord Token <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="password"
-                value={discordToken}
-                onChange={(e) => setDiscordToken(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="MTAw..."
-                required
-              />
-              <p className="text-xs text-slate-500 mt-2">
-                Get your token from{' '}
-                <a
-                  href="https://discord.com/developers/applications"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  Discord Developer Portal
-                </a>
-              </p>
+            <div
+              className="flex items-center justify-between rounded-xl px-3.5 py-3"
+              style={{ backgroundColor: 'var(--t-aa)', border: '1px solid var(--t-aa)' }}
+            >
+              <div className="flex items-center gap-2">
+                <Zap className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--t-a)' }} />
+                <span className="text-xs" style={{ color: 'var(--t-sub)' }}>
+                  {t.botModal.settingsApplied}{' '}
+                  <strong style={{ color: 'var(--t-tx)' }}>{LANGUAGE_LABELS[defaults.defaultLanguage]}</strong>
+                  {' · '}
+                  <strong style={{ color: 'var(--t-tx)' }}>{THEME_LABELS[defaults.defaultBotTheme]}</strong>
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => { onClose(); navigate('/dashboard/settings'); }}
+                className="dnc-btn-icon ml-2 shrink-0 w-6 h-6"
+                style={{ color: 'var(--t-m)' }}
+                title={t.settings.editProfile}
+              >
+                <Settings className="w-3.5 h-3.5" />
+              </button>
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Workflow (Optional)
-            </label>
-            <select
-              value={workflowId || ''}
-              onChange={(e) => setWorkflowId(e.target.value ? Number(e.target.value) : null)}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">No workflow</option>
-              {workflows.map((workflow) => (
-                <option key={workflow.id} value={workflow.id}>
-                  {workflow.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex justify-end space-x-3">
+          {/* Actions */}
+          <div className="flex justify-end gap-2 pt-1">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition"
+              className="dnc-btn dnc-btn-ghost"
             >
-              Cancel
+              {t.common.cancel}
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="dnc-btn dnc-btn-primary"
             >
-              {loading ? 'Saving...' : isEditing ? 'Update Bot' : 'Create Bot'}
+              {loading && (
+                <span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              )}
+              {loading ? t.botModal.saving : isEditing ? t.botModal.update : t.botModal.createInstance}
             </button>
           </div>
         </form>

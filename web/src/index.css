@@ -1,5 +1,408 @@
 @import "tailwindcss";
 
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* ── Brand Action (constant) ── */
+  --accent:      #0052FF;
+  --accent-hv:   #0041CC;
+  --accent-glow: rgba(0,82,255,0.22);
+  /* ── Type ── */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* ── Shadows ── */
+  --shadow-sm:   0 1px 4px rgba(0,0,0,0.12);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.14);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.22);
+  --shadow-glow: 0 0 24px rgba(0,82,255,0.22);
+  /* ── Radii ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+/* ── Typography ─────────────────────────────────────────────────────────────── */
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 15px;
+}
+
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] body {
+  background-color: #FFFFFF;
+  color: #1A1D23;
+}
+
+/* ── Dark theme ──────────────────────────────────────────────────────────── */
+[data-theme="dark"] body {
+  background-color: #000000;
+  color: #F0F6FC;
+}
+
+/* ── Premium focus ring ──────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid #0052FF;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Selection ───────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(0,82,255,0.22);
+  color: #fff;
+}
+
+/* ── Premium card utility ────────────────────────────────────────────────── */
+.dnc-card {
+  background: var(--t-s, #16154a);
+  border: 1px solid var(--t-bd, rgba(134,134,172,0.18));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.dnc-card:hover {
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  border-color: rgba(134,134,172,0.35);
+}
+
+/* ── Premium button utilities ───────────────────────────────────────────── */
+
+/* Shared easing: snappy micro-interaction curve */
+:root { --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1); }
+
+.dnc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.15rem;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.22s var(--ease-out-quint);
+}
+.dnc-btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Primary – accent-colored, elevated */
+.dnc-btn-primary {
+  background: var(--t-a, #0052FF);
+  color: var(--t-btn-text, #fff);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.06),
+    0 4px 12px var(--t-aa, rgba(0,82,255,0.18));
+}
+.dnc-btn-primary:hover {
+  background: var(--t-ah, #0041CC);
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.08),
+    0 8px 24px var(--t-aa, rgba(0,82,255,0.28));
+}
+.dnc-btn-primary:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  transition-duration: 0.08s;
+}
+
+/* Ghost – transparent, bordered */
+.dnc-btn-ghost {
+  background: transparent;
+  color: var(--t-sub, #8686AC);
+  border: 1px solid var(--t-bd, rgba(134,134,172,0.25));
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.dnc-btn-ghost:hover {
+  background: var(--t-s2, rgba(134,134,172,0.1));
+  color: var(--t-tx, #fff);
+  border-color: var(--t-a, rgba(134,134,172,0.45));
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+.dnc-btn-ghost:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Danger – red-tinted */
+.dnc-btn-danger {
+  background: rgba(239,68,68,0.06);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.15);
+  box-shadow: 0 1px 2px rgba(239,68,68,0.04);
+}
+.dnc-btn-danger:hover {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(239,68,68,0.12);
+}
+.dnc-btn-danger:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Danger solid – filled red */
+.dnc-btn-danger-solid {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.08),
+    0 4px 12px rgba(239,68,68,0.22);
+}
+.dnc-btn-danger-solid:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.1),
+    0 8px 24px rgba(239,68,68,0.3);
+}
+.dnc-btn-danger-solid:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Success – green filled */
+.dnc-btn-success {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.06),
+    0 4px 12px rgba(34,197,94,0.22);
+}
+.dnc-btn-success:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.08),
+    0 8px 24px rgba(34,197,94,0.3);
+}
+.dnc-btn-success:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Soft – accent tinted (control buttons) */
+.dnc-btn-soft {
+  background: var(--t-aa, rgba(0,82,255,0.08));
+  color: var(--t-a, #0052FF);
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.dnc-btn-soft:hover {
+  background: var(--t-aa, rgba(0,82,255,0.14));
+  border-color: var(--t-aa, rgba(0,82,255,0.12));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--t-aa, rgba(0,82,255,0.1));
+}
+.dnc-btn-soft:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Icon – round, compact */
+.dnc-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.18s var(--ease-out-quint);
+}
+.dnc-btn-icon:hover {
+  background: var(--t-s2, rgba(134,134,172,0.1));
+  transform: scale(1.08);
+}
+.dnc-btn-icon:active {
+  transform: scale(0.92);
+  transition-duration: 0.06s;
+}
+.dnc-btn-icon:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.dnc-btn-icon-danger {
+  color: var(--t-m, #8686AC);
+}
+.dnc-btn-icon-danger:hover {
+  color: #ef4444 !important;
+  background: rgba(239,68,68,0.08);
+}
+
+/* Discord – branded */
+.dnc-btn-discord {
+  background: #5865F2;
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.06),
+    0 4px 12px rgba(88,101,242,0.22);
+}
+.dnc-btn-discord:hover {
+  background: #4752C4;
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.08),
+    0 8px 24px rgba(88,101,242,0.32);
+}
+.dnc-btn-discord:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Tab / pill toggle */
+.dnc-btn-tab {
+  background: transparent;
+  color: var(--t-m, #8686AC);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: all 0.18s var(--ease-out-quint);
+}
+.dnc-btn-tab[data-active="true"] {
+  background: var(--t-aa, rgba(0,82,255,0.08));
+  color: var(--t-a, #0052FF);
+  border-color: var(--t-aa, rgba(0,82,255,0.12));
+}
+.dnc-btn-tab:not([data-active="true"]):hover {
+  background: var(--t-s2, rgba(134,134,172,0.08));
+  color: var(--t-tx, #fff);
+}
+
+/* Sizes */
+.dnc-btn-xs { padding: 0.25rem 0.625rem; font-size: 0.6875rem; border-radius: 7px; gap: 0.25rem; }
+.dnc-btn-sm { padding: 0.375rem 0.875rem; font-size: 0.75rem; border-radius: 8px; gap: 0.375rem; }
+.dnc-btn-lg { padding: 0.625rem 1.5rem; font-size: 0.9375rem; border-radius: 12px; }
+
+/* Full width */
+.dnc-btn-block { width: 100%; justify-content: center; }
+
+
+/* ── Toast slide-in animation ──────────────────────────────────────────────── */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out both;
+}
+
+/* ── Page fade-in ─────────────────────────────────────────────────────────── */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: page-enter 0.25s ease-out both;
+}
+
+/* ── Glow pulse (accent elements) ─────────────────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,82,255,0.35); }
+  50%       { box-shadow: 0 0 0 8px rgba(0,82,255,0); }
+}
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* ── n8n-style dark panel overrides ──────────────────────────────────────── */
+
+/* Form elements inside the dark config panel */
+.n8n-panel select,
+.n8n-panel input[type='text'],
+.n8n-panel input[type='number'],
+.n8n-panel input[type='password'],
+.n8n-panel input[type='email'],
+.n8n-panel input[type='url'],
+.n8n-panel input[type='search'],
+.n8n-panel textarea {
+  background-color: #161B22 !important;
+  border-color: #30363D !important;
+  color: #F0F6FC !important;
+  border-radius: 0.5rem;
+}
+.n8n-panel select option {
+  background-color: #161B22;
+  color: #F0F6FC;
+}
+.n8n-panel input::placeholder,
+.n8n-panel textarea::placeholder {
+  color: #484F58 !important;
+}
+.n8n-panel select:focus,
+.n8n-panel input:focus,
+.n8n-panel textarea:focus {
+  outline: none;
+  border-color: #0052FF !important;
+  box-shadow: 0 0 0 2px rgba(0,82,255,0.18) !important;
+}
+
+/* White/light backgrounds → dark inside panel */
+.n8n-panel .bg-white,
+.n8n-panel .bg-slate-50 {
+  background-color: #161B22 !important;
+}
+.n8n-panel .bg-slate-100 {
+  background-color: #1F2937 !important;
+}
+
+/* Light borders → dark */
+.n8n-panel .border-slate-100,
+.n8n-panel .border-slate-200,
+.n8n-panel .border-slate-300 {
+  border-color: #30363D !important;
+}
+
+/* Text colors */
+.n8n-panel .text-slate-900,
+.n8n-panel .text-slate-800,
+.n8n-panel .text-slate-700 {
+  color: #F0F6FC !important;
+}
+.n8n-panel .text-slate-600 {
+  color: #C9D1D9 !important;
+}
+.n8n-panel .text-slate-500 {
+  color: #8B949E !important;
+}
+.n8n-panel .text-slate-400 {
+  color: #6E7681 !important;
+}
+.n8n-panel .text-slate-300 {
+  color: #484F58 !important;
+}
+.n8n-panel label {
+  color: #8B949E;
+}
+
+/* Hover states */
+.n8n-panel .hover\:bg-slate-100:hover {
+  background-color: #1F2937 !important;
+}
+.n8n-panel .hover\:bg-blue-50:hover {
+  background-color: rgba(0,82,255,0.08) !important;
+}
+
+/* Code/mono text */
+.n8n-panel code {
+  background-color: #0A0F1A !important;
+  color: #0052FF !important;
+}
+
 /* Custom React Flow styling */
 .react-flow__node {
   cursor: grab;
@@ -15,32 +418,96 @@
 }
 
 .react-flow__edge-path {
-  stroke: #3b82f6;
+  stroke: var(--t-bd);
   stroke-width: 2;
 }
 
 .react-flow__edge.selected .react-flow__edge-path {
-  stroke: #1e40af;
-  stroke-width: 3;
+  stroke: var(--t-a);
+  stroke-width: 2;
+}
+
+/* Dark canvas controls & minimap */
+.react-flow__controls {
+  background: var(--t-s) !important;
+  border: 1px solid var(--t-bd) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+.react-flow__controls-button {
+  background: var(--t-s) !important;
+  border-bottom-color: var(--t-bd) !important;
+  color: var(--t-sub) !important;
+  fill: var(--t-sub) !important;
+}
+.react-flow__controls-button:hover {
+  background: var(--t-s2) !important;
+  fill: var(--t-tx) !important;
+}
+.react-flow__minimap {
+  background: var(--t-s) !important;
+  border: 1px solid var(--t-bd) !important;
+  border-radius: 8px !important;
+}
+.react-flow__minimap-mask {
+  fill: rgba(0,0,0,0.5) !important;
+}
+.react-flow__background {
+  background: var(--t-bg) !important;
+}
+
+/* ── Workflow execution highlighting ─────────────────────────────────────── */
+
+.node-exec-running > .react-flow__node-custom,
+.node-exec-running > .react-flow__node-coreBot {
+  outline: 2px solid #0052FF;
+  outline-offset: 4px;
+  border-radius: 18px;
+  animation: exec-pulse 0.9s ease-in-out infinite;
+}
+
+.node-exec-done > .react-flow__node-custom,
+.node-exec-done > .react-flow__node-coreBot {
+  outline: 2px solid #22c55e;
+  outline-offset: 4px;
+  border-radius: 18px;
+}
+
+.node-exec-error > .react-flow__node-custom,
+.node-exec-error > .react-flow__node-coreBot {
+  outline: 2px solid #ef4444;
+  outline-offset: 4px;
+  border-radius: 18px;
+}
+
+@keyframes exec-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,82,255,0.45); }
+  50%       { box-shadow: 0 0 0 10px rgba(0,82,255,0); }
+}
+
+.edge-exec-active .react-flow__edge-path {
+  stroke: #0052FF !important;
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 5px rgba(0,82,255,0.6));
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: rgba(134,134,172,0.28);
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(134,134,172,0.5);
 }
 
 /* Animations */

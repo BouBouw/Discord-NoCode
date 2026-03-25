@@ -1,6 +1,11 @@
 export default function errorHandler(err, req, res, next) {
   console.error(err);
 
+  // Handle all AppError subclasses (ValidationError, LimitExceededError, NotFoundError, etc.)
+  if (err.statusCode && err.code) {
+    return res.status(err.statusCode).json({ error: err.message, code: err.code });
+  }
+
   if (err.name === 'ValidationError') {
     return res.status(400).json({ error: err.message });
   }

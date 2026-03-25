@@ -1,7 +1,18 @@
 import { createBot, getBotsByUser, getBotById, getBotWithToken, updateBot, updateBotStatus, deleteBot } from '../services/botService.js';
 import { BOT_STATUS } from '../config/constants.js';
+import db from '../config/database.js';
+
+// Map DB status values → frontend status values
+const STATUS_MAP = { active: 'running', errored: 'error' };
+function normalizeBot(bot) {
+  if (!bot) return bot;
+  return { ...bot, status: STATUS_MAP[bot.status] ?? bot.status };
+}
 import { z } from 'zod';
-import { createBotContainer, startBotContainer, stopBotContainer, removeBotContainer, getContainerStatus, getContainerLogs, listBotContainers } from '../services/dockerService.js';
+import {
+  createBotContainer, startBotContainer, stopBotContainer, removeBotContainer,
+  getContainerStatus, getContainerLogs, listBotContainers, getBotMysqlStatus,
+} from '../services/dockerService.js';
 
 // Zod schemas for validation
 const createBotSchema = z.object({
@@ -13,6 +24,7 @@ const createBotSchema = z.object({
 const updateBotSchema = z.object({
   name: z.string().min(1, 'Bot name is required').optional(),
   workflowId: z.number().optional(),
+  discordToken: z.string().min(1, 'Discord token is required').optional(),
 });
 
 // Route parameter validation schema
@@ -23,7 +35,7 @@ const botIdSchema = z.object({
 export async function listBots(req, res) {
   try {
     const bots = await getBotsByUser(req.user.userId);
-    res.json(bots);
+    res.json(bots.map(normalizeBot));
   } catch (error) {
     console.error('Error fetching bots:', error);
     res.status(error.statusCode || 500).json({
@@ -51,7 +63,7 @@ export async function getBot(req, res) {
       return res.status(404).json({ error: 'NOT_FOUND' });
     }
 
-    res.json(bot);
+    res.json(normalizeBot(bot));
   } catch (error) {
     console.error('Error fetching bot:', error);
     res.status(error.statusCode || 500).json({
@@ -90,7 +102,7 @@ export async function createBotHandler(req, res) {
       // Container creation failure doesn't block bot creation
     });
 
-    res.status(201).json(bot);
+    res.status(201).json(normalizeBot(bot));
   } catch (error) {
     console.error('Error creating bot:', error);
 
@@ -130,16 +142,29 @@ export async function updateBotHandler(req, res) {
     }
 
     const { id } = validatedParams.data;
-    const { name, workflowId } = validationResult.data;
+    const { name, workflowId, discordToken } = validationResult.data;
 
-    await updateBot(id, req.user.userId, name, workflowId);
+    await updateBot(id, req.user.userId, name, workflowId, discordToken);
     const bot = await getBotById(id, req.user.userId);
 
     if (!bot) {
       return res.status(404).json({ error: 'NOT_FOUND' });
     }
 
-    res.json(bot);
+    // If token changed, rebuild the Docker container so it picks up the new token
+    if (discordToken) {
+      try {
+        await removeBotContainer(id);
+        const botWithToken = await getBotWithToken(id, req.user.userId);
+        await createBotContainer(botWithToken);
+        console.log(`[Docker] Container rebuilt for bot ${id} after token change`);
+      } catch (dockerError) {
+        console.error(`[Docker] Failed to rebuild container for bot ${id}:`, dockerError);
+        // Don't fail the whole request — token is already saved in DB
+      }
+    }
+
+    res.json(normalizeBot(bot));
   } catch (error) {
     console.error('Error updating bot:', error);
 
@@ -212,18 +237,28 @@ export async function startBot(req, res) {
 
     const { id } = validatedParams.data;
     await updateBotStatus(id, req.user.userId, BOT_STATUS.ACTIVE);
+    // Record when the bot was started
+    await db.execute('UPDATE bots SET started_at = NOW() WHERE id = ? AND user_id = ?', [id, req.user.userId]);
     const bot = await getBotById(id, req.user.userId);
 
     if (!bot) {
       return res.status(404).json({ error: 'NOT_FOUND' });
     }
+    const normalizedBot = normalizeBot(bot);
 
-    // Start Docker container
+    // Start Docker container — create it first if it no longer exists
     try {
-      await startBotContainer(id);
+      const { exists } = await getContainerStatus(id);
+      if (exists) {
+        await startBotContainer(id);
+      } else {
+        // Container was removed (e.g. after a deploy) — recreate it
+        console.log(`[Docker] Container discord-bot-${id} not found, recreating...`);
+        const botWithToken = await getBotWithToken(id, req.user.userId);
+        await createBotContainer(botWithToken);
+      }
     } catch (dockerError) {
       console.error(`[Docker] Failed to start container for bot ${id}:`, dockerError);
-      // Revert status if Docker fails
       await updateBotStatus(id, req.user.userId, BOT_STATUS.STOPPED);
       return res.status(500).json({
         error: 'DOCKER_ERROR',
@@ -231,7 +266,7 @@ export async function startBot(req, res) {
       });
     }
 
-    res.json(bot);
+    res.json(normalizedBot);
   } catch (error) {
     console.error('Error starting bot:', error);
 
@@ -268,6 +303,7 @@ export async function stopBot(req, res) {
     if (!bot) {
       return res.status(404).json({ error: 'NOT_FOUND' });
     }
+    const normalizedBot = normalizeBot(bot);
 
     // Stop Docker container
     try {
@@ -277,7 +313,7 @@ export async function stopBot(req, res) {
       // Container might not exist, don't fail the request
     }
 
-    res.json(bot);
+    res.json(normalizedBot);
   } catch (error) {
     console.error('Error stopping bot:', error);
 
@@ -322,7 +358,7 @@ export async function getBotContainerStatus(req, res) {
     const containerStatus = await getContainerStatus(id);
 
     res.json({
-      ...bot,
+      ...normalizeBot(bot),
       container: containerStatus,
     });
   } catch (error) {
@@ -390,5 +426,34 @@ export async function listAllContainers(req, res) {
       error: 'DOCKER_ERROR',
       message: 'Failed to list containers',
     });
+  }
+}
+
+// ─── Database status ─────────────────────────────────────────────────────────
+
+/** Shared ownership validator */
+async function requireBotOwner(req, res) {
+  const parsed = botIdSchema.safeParse(req.params);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'VALIDATION_ERROR', details: parsed.error.errors });
+    return null;
+  }
+  const bot = await getBotById(parsed.data.id, req.user.userId);
+  if (!bot) {
+    res.status(404).json({ error: 'NOT_FOUND' });
+    return null;
+  }
+  return bot;
+}
+
+/** GET /api/bots/:id/db/status — MySQL is inside the bot container */
+export async function getDbStatus(req, res) {
+  try {
+    const bot = await requireBotOwner(req, res);
+    if (!bot) return;
+    const status = await getBotMysqlStatus(bot.id);
+    res.json({ status, container: `discord-bot-${bot.id}` });
+  } catch (error) {
+    res.status(500).json({ error: 'DOCKER_ERROR', message: error.message });
   }
 }

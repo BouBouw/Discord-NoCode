@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Bot, LogOut, User } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -10,8 +10,8 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <Bot className="w-8 h-8" />
-            <span className="text-xl font-bold">Discord NoCode</span>
+            <img src="/logo.ico" alt="DisFlow" className="w-8 h-8 object-contain" />
+            <span className="text-xl font-bold">DisFlow</span>
           </Link>
 
           <div className="flex items-center space-x-4">
