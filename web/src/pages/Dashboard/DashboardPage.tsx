@@ -70,7 +70,7 @@ export default function DashboardPage() {
   }, []);
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { completeAction } = useOnboarding();
+  const { completeAction, active: onboardingActive, step: onboardingStep } = useOnboarding();
 
   useEffect(() => { loadData(); }, []);
 
@@ -86,6 +86,26 @@ export default function DashboardPage() {
       setLoadingPage(false);
     }
   }
+
+  // Auto-skip "create bot" step if user already has a bot (e.g. went back)
+  useEffect(() => {
+    if (!onboardingActive || onboardingStep?.id !== 'dashboard-create-bot') return;
+    if (bots.length === 0) return;
+    // Already has a bot — skip to workflow with the latest one
+    const bot = bots[bots.length - 1];
+    completeAction('bot-created');
+    (async () => {
+      if (bot.workflow_id) {
+        navigate(`/workflow/${bot.workflow_id}`);
+      } else {
+        try {
+          const wf = await createWorkflow({ name: `${bot.name} Workflow`, description: `Workflow for ${bot.name}`, nodes: [], connections: [] });
+          await botAPI.update(bot.id, { workflowId: wf.id });
+          navigate(`/workflow/${wf.id}`);
+        } catch { /* ignore */ }
+      }
+    })();
+  }, [onboardingActive, onboardingStep, bots]);
 
   async function handleOpenWorkflow(bot: Bot) {
     if (bot.workflow_id) { navigate(`/workflow/${bot.workflow_id}`); return; }
@@ -148,7 +168,23 @@ export default function DashboardPage() {
       }
       await loadData();
       showToast(id ? t.common.saved : t.dashboard.toastCreated);
-      if (!id) completeAction('bot-created');
+      if (!id) {
+        completeAction('bot-created');
+        // During onboarding, auto-navigate to the workflow editor
+        if (onboardingActive && 'discordToken' in data && data.discordToken) {
+          const updatedBots = await botAPI.list();
+          const newBot = updatedBots[updatedBots.length - 1];
+          if (newBot) {
+            if (newBot.workflow_id) {
+              navigate(`/workflow/${newBot.workflow_id}`);
+            } else {
+              const wf = await createWorkflow({ name: `${newBot.name} Workflow`, description: `Workflow for ${newBot.name}`, nodes: [], connections: [] });
+              await botAPI.update(newBot.id, { workflowId: wf.id });
+              navigate(`/workflow/${wf.id}`);
+            }
+          }
+        }
+      }
     } catch (err) {
       console.error('Save failed:', err);
       throw err;

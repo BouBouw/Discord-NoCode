@@ -292,6 +292,14 @@ const en: TranslationKeys = {
     memberSince: 'Member since',
     discordLinked: 'Discord linked',
     discordNotLinked: 'Discord not linked',
+    linkDiscord: 'Link Discord',
+    linkDiscordDesc: 'Link your Discord account (must use the same email)',
+    unlinkDiscord: 'Unlink Discord account',
+    discordLinkSuccess: 'Discord account linked successfully!',
+    discordUnlinkSuccess: 'Discord account unlinked successfully.',
+    discordLinkFailed: 'Failed to link Discord account. Please try again.',
+    discordEmailMismatch: 'The Discord account email does not match your registered email.',
+    discordAlreadyLinked: 'This Discord account is already linked to another user.',
     planFree: 'Free Plan',
     editProfile: 'Edit profile',
     instanceDefaults: 'New instance settings',
@@ -1875,23 +1883,1387 @@ const en: TranslationKeys = {
     // Steps — Workflow
     workflowWelcomeTitle: 'Workflow Editor',
     workflowWelcomeDesc: 'This is where the magic happens! Design your bot\'s behavior visually by connecting nodes together — like building blocks.',
+    headerTitle: 'The Toolbar',
+    headerDesc: 'Here you can rename your workflow, see the linked bot status, import/export your project, and access keyboard shortcuts.',
+    leftSidebarTitle: 'Left Sidebar',
+    leftSidebarDesc: 'Access your databases, team members, canvas settings, ready-made templates, and a help section — all from this panel.',
+    canvasTitle: 'The Canvas',
+    canvasDesc: 'This is your visual workspace. Drag nodes to reposition them, double-click a node to configure it, and zoom in/out with your mouse wheel.',
     sidebarTitle: 'Node Library',
     sidebarDesc: 'This sidebar contains all the building blocks for your bot: triggers, actions, logic, and more. Browse categories or search for specific nodes.',
     addTriggerTitle: 'Add a Trigger',
     addTriggerDesc: 'Drag a "Command Handler" or "Event Handler" from the sidebar onto the canvas. Triggers define when your bot responds.',
     addActionTitle: 'Add an Action',
     addActionDesc: 'Now drag an action node like "Send Message" onto the canvas. Actions define what your bot does when triggered.',
-    canvasTitle: 'The Canvas',
-    canvasDesc: 'This is your visual workspace. Drag nodes to reposition them, double-click a node to configure it, and zoom in/out with your mouse wheel.',
     connectTitle: 'Connect Nodes',
     connectDesc: 'Drag from a node\'s output handle (right side) to another node\'s input handle (left side) to create a connection. This defines the flow.',
+    bottomBarTitle: 'Bottom Panel',
+    bottomBarDesc: 'Toggle the AI Chat to get help building your workflow, or open the Console to see real-time execution logs when your bot is running.',
     saveTitle: 'Save Your Work',
     saveDesc: 'Click the Save button to save your workflow. Once saved, you can deploy it to make your bot live!',
+    deployTitle: 'Deploy Your Bot',
+    deployDesc: 'Hit Deploy to push your workflow to your bot. It will rebuild and restart automatically with your latest changes.',
     completeTitle: 'You\'re All Set! 🎉',
     completeDesc: 'You now know the basics of DisFlow. Create triggers, add actions, connect them, and deploy your bot. Happy building!',
 
     // Settings
     restartTour: 'Restart tour',
+  },
+
+  // ── Documentation ───────────────────────────────────────────────────────────
+  docs: {
+    docsLabel: 'Docs',
+    homeLabel: 'Documentation',
+    homeTitle: 'DisFlow Documentation',
+    homeSubtitle: 'Everything you need to build powerful Discord bots — no code required.',
+    searchPlaceholder: 'Search documentation...',
+    articlesLabel: 'articles',
+
+    // ── Getting Started ──
+    gettingStartedTitle: 'Getting Started',
+    gettingStartedDesc: 'New to DisFlow? Learn the basics and create your first bot in minutes.',
+    whatIsDisflowTitle: 'What is DisFlow?',
+    whatIsDisflowBody: `DisFlow is a **visual no-code platform** that lets you build Discord bots by connecting nodes on a canvas — no programming skills required.
+
+## How it works
+
+- **Drag & drop** trigger and action nodes onto the canvas
+- **Connect** them together to define your bot\'s behaviour
+- **Configure** each node using a simple sidebar panel
+- **Deploy** with one click and your bot goes live instantly
+
+:::tip
+DisFlow handles all the complex Discord API interactions behind the scenes. You just focus on *what* your bot should do, not *how* it does it.
+:::
+
+## Who is it for?
+
+- Community managers who want custom bots without hiring a developer
+- Server owners looking for moderation, welcome messages, or mini-games
+- Developers who want to rapidly prototype bot ideas
+- Anyone who wants a visual approach to bot creation`,
+
+    createAccountTitle: 'Creating Your Account',
+    createAccountBody: `## Sign up options
+
+You can register using:
+
+- **Email & password** — fill in the form on the Register page
+- **Discord OAuth** — click "Continue with Discord" to log in instantly
+
+:::info
+Using Discord OAuth links your Discord identity to DisFlow, making it easier to manage bot tokens and permissions later.
+:::
+
+## Setting up your profile
+
+After registering, head to **Dashboard → Settings** to:
+
+- Choose your preferred language (32+ languages available)
+- Select your theme (light or dark)
+- Configure notification preferences`,
+
+    firstBotTitle: 'Creating Your First Bot',
+    firstBotBody: `## Step-by-step
+
+1. Go to the **Dashboard**
+2. Click the **"+ New Bot"** button
+3. Enter your bot\'s **name** and **Discord token**
+4. Click **Create** — your bot instance is ready!
+
+## Next steps
+
+Once your bot is created, click on it to open the **Workflow Editor**. From there:
+
+- Add a **Command handler** (e.g. /ping)
+- Connect it to a **Send Message** action
+- Hit **Save** then **Deploy**
+
+:::tip
+Start simple! A /ping command is the perfect first workflow to test that everything works correctly.
+:::
+
+## Bot status
+
+Your bot will show one of these statuses on the dashboard:
+
+- **Online** — bot is running and connected to Discord
+- **Offline** — bot is stopped
+- **Error** — something went wrong, check the console logs`,
+
+    discordTokenTitle: 'Getting a Discord Bot Token',
+    discordTokenBody: `## Creating a Discord Application
+
+1. Go to the **Discord Developer Portal** (https://discord.com/developers/applications)
+2. Click **"New Application"** and give it a name
+3. Navigate to the **Bot** tab on the left
+4. Click **"Add Bot"** and confirm
+
+## Copying the token
+
+1. Under the Bot tab, click **"Reset Token"**
+2. Copy the token that appears
+
+:::warning
+Never share your bot token publicly! Anyone with the token can control your bot. If it leaks, reset it immediately from the Developer Portal.
+:::
+
+## Inviting the bot to your server
+
+1. Go to the **OAuth2 → URL Generator** tab
+2. Select scopes: **bot** and **applications.commands**
+3. Select the permissions your bot needs
+4. Copy the generated URL and open it in your browser
+5. Choose your server and click **Authorize**
+
+## Required Intents
+
+Under the Bot tab, enable these privileged intents if your bot needs them:
+
+- **Presence Intent** — to track online/offline status
+- **Server Members Intent** — to react to member join/leave
+- **Message Content Intent** — to read message text`,
+
+    // ── Dashboard ──
+    dashboardTitle: 'Dashboard',
+    dashboardDesc: 'Navigate your bots, stats, and settings from the main dashboard.',
+    dashOverviewTitle: 'Dashboard Overview',
+    dashOverviewBody: `The dashboard is your **command centre** for managing all your DisFlow bots.
+
+## Layout
+
+- **Stats bar** at the top — total bots, online bots, total workflows, deployments
+- **Bot cards** — each card shows the bot name, status, and quick actions
+- **Sidebar** — navigate between Dashboard, Databases, Members, and Settings
+
+## Quick actions
+
+From each bot card you can:
+
+- **Open** the Workflow Editor
+- **Start / Stop** the bot
+- **Delete** the bot instance
+- View **logs** and recent activity`,
+
+    dashStatsTitle: 'Stats & Widgets',
+    dashStatsBody: `## Dashboard widgets
+
+The dashboard features real-time overview widgets:
+
+- **Total Bots** — number of bot instances you\'ve created
+- **Online Bots** — how many are currently running
+- **Workflows** — total saved workflows across all bots
+- **Deployments** — how many times you\'ve deployed today
+
+:::tip
+Widgets update in real-time. Keep the dashboard open to monitor your bots\' health at a glance.
+:::`,
+
+    dashInstancesTitle: 'Managing Bot Instances',
+    dashInstancesBody: `## Instance page
+
+Click a bot card to open its dedicated instance page where you can:
+
+- See detailed **status** and **uptime**
+- View and manage **workflows** attached to this bot
+- Access **logs** and **console** output
+- Update the bot **token** or **settings**
+
+## Starting and stopping
+
+- Click **Start** to boot the bot and connect it to Discord
+- Click **Stop** to gracefully shut it down
+- Use **Restart** to apply changes after editing the token
+
+:::info
+Stopping a bot does not delete any workflows or data. You can restart it at any time.
+:::`,
+
+    dashSettingsTitle: 'Account Settings',
+    dashSettingsBody: `## Customisation
+
+In **Dashboard → Settings** you can configure:
+
+- **Language** — choose from 32+ languages
+- **Theme** — dark or light mode
+- **Accent colour** — personalise the interface
+- **Notifications** — email and browser notifications
+
+## Security
+
+- Change your **password**
+- Enable **two-factor authentication** (if available)
+- View active **sessions**
+- **Delete account** — removes all data permanently`,
+
+    // ── Canvas ──
+    canvasTitle: 'Canvas & Editor',
+    canvasDesc: 'Master the visual workflow editor — nodes, connections, and shortcuts.',
+    canvasBasicsTitle: 'Canvas Basics',
+    canvasBasicsBody: `The canvas is the main workspace where you build your bot\'s logic visually.
+
+## Navigation
+
+- **Pan** — click and drag on the empty canvas
+- **Zoom** — scroll wheel or pinch on trackpad
+- **Fit view** — double-click the empty canvas or use the minimap
+
+## Elements
+
+- **Nodes** — coloured blocks representing triggers, actions, or logic
+- **Edges** — lines connecting nodes to define the execution flow
+- **Handles** — small dots on node edges where connections attach
+
+:::tip
+Use the minimap (bottom-right corner) to navigate large workflows quickly.
+:::`,
+
+    addNodesTitle: 'Adding Nodes',
+    addNodesBody: `## Methods
+
+There are two ways to add nodes:
+
+1. **Left sidebar** → Browse categories → Click or drag a node onto the canvas
+2. **Right-click** the canvas → Quick-add menu
+
+## Node categories
+
+- **Handlers** (triggers) — what starts the flow (commands, events, buttons…)
+- **Actions** — what the bot does (send message, manage roles…)
+- **Logic** — conditions, loops, variables
+- **Database** — SQL queries, table management
+
+:::tip
+Use the search bar in the sidebar to quickly find a specific node type.
+:::`,
+
+    connectNodesTitle: 'Connecting Nodes',
+    connectNodesBody: `## How to connect
+
+1. Hover over a node\'s **output handle** (right side) — it will highlight
+2. **Click and drag** from the output handle
+3. Drop onto another node\'s **input handle** (left side)
+
+A coloured line (edge) appears between them, representing the flow direction.
+
+## Rules
+
+- A trigger node can connect to multiple actions (parallel execution)
+- An action can only have **one incoming** connection
+- You cannot create **circular** loops (A → B → A)
+- Logic nodes (conditions) have **multiple outputs** (true/false paths)
+
+:::warning
+Disconnected nodes won\'t execute when the bot runs. Make sure every action is connected to a trigger chain.
+:::`,
+
+    configureNodesTitle: 'Configuring Nodes',
+    configureNodesBody: `## Opening the config panel
+
+Click any node to open its **configuration sidebar** on the right. Each node type has specific settings.
+
+## Common fields
+
+- **Label** — a custom name to identify the node on the canvas
+- **Channel** — which Discord channel to target
+- **Content** — the text message to send
+
+## Variables
+
+Use dynamic values with the **\`{variable}\`** syntax:
+
+- \`{user.name}\` — the triggering user\'s name
+- \`{user.id}\` — their Discord ID
+- \`{channel.name}\` — the channel where the event happened
+- \`{args}\` — command arguments
+
+:::tip
+Click the variable icon in any text field to browse available variables.
+:::`,
+
+    shortcutsTitle: 'Keyboard Shortcuts',
+    shortcutsBody: `## Canvas shortcuts
+
+- **Ctrl + S** — Save workflow
+- **Ctrl + Z** — Undo
+- **Ctrl + Shift + Z** — Redo
+- **Delete / Backspace** — Delete selected node or edge
+- **Ctrl + A** — Select all nodes
+- **Ctrl + C / V** — Copy / Paste nodes
+- **Escape** — Deselect all
+
+## Navigation
+
+- **Space + Drag** — Pan the canvas
+- **Scroll** — Zoom in/out
+- **Ctrl + Shift + F** — Fit all nodes in view
+
+:::tip
+Holding **Shift** while clicking lets you select multiple nodes.
+:::`,
+
+    importExportTitle: 'Import & Export',
+    importExportBody: `## Exporting a workflow
+
+1. Open the workflow in the editor
+2. Click the **menu** button (top bar) → **Export**
+3. The workflow is saved as a JSON file
+
+## Importing a workflow
+
+1. In the editor, click **menu** → **Import**
+2. Select a previously exported JSON file
+3. The nodes and edges are loaded onto the canvas
+
+:::info
+Exported workflows can be shared with other DisFlow users. They just need to import the JSON file into their own editor.
+:::`,
+
+    // ── Handlers ──
+    handlersTitle: 'Handlers & Triggers',
+    handlersDesc: 'Set up the events and commands that start your bot workflows.',
+    commandHandlerTitle: 'Command Handler',
+    commandHandlerBody: `The Command Handler triggers your workflow when a user types a **slash command**.
+
+## Configuration
+
+- **Command name** — the name after the slash (e.g. \`/ping\`)
+- **Description** — shown in Discord\'s command menu
+- **Options** — add parameters (string, integer, user, channel, role, boolean)
+
+## Example
+
+A simple **/ping** command:
+
+1. Add a **Command Handler** node → set name to \`ping\`
+2. Connect it to a **Send Message** node → set content to \`Pong! 🏓\`
+3. Deploy
+
+:::tip
+Discord caches slash commands. After deploying for the first time, it may take up to an hour for the command to appear. Subsequent updates are faster.
+:::
+
+## Available variables
+
+- \`{user}\` — the user who ran the command
+- \`{channel}\` — where the command was used
+- \`{guild}\` — the server
+- \`{args.optionName}\` — value of command options`,
+
+    eventHandlerTitle: 'Event Handler',
+    eventHandlerBody: `The Event Handler triggers when a **Discord event** occurs — no user command needed.
+
+## Available events
+
+- **messageCreate** — a message is sent in a channel
+- **guildMemberAdd** — someone joins the server
+- **guildMemberRemove** — someone leaves or is removed
+- **messageReactionAdd** — a reaction is added
+- **voiceStateUpdate** — someone joins/leaves a voice channel
+- **interactionCreate** — a button, select menu, or modal is submitted
+- And many more…
+
+## Configuration
+
+1. Drag an **Event Handler** onto the canvas
+2. Select the event type from the dropdown
+3. (Optional) Add filters — e.g. only trigger in specific channels
+
+:::info
+Some events require **privileged intents** to be enabled in the Discord Developer Portal. Check the "Getting a Discord Bot Token" guide for details.
+:::`,
+
+    buttonHandlerTitle: 'Button Handler',
+    buttonHandlerBody: `The Button Handler triggers when a user **clicks a button** that your bot previously sent.
+
+## How it works
+
+1. First, send a message with buttons using the **Send Message** + **Add Button** action
+2. Assign each button a unique **Custom ID**
+3. Add a **Button Handler** node and set the same Custom ID
+
+When a user clicks that button, the handler fires and executes the connected actions.
+
+## Configuration
+
+- **Custom ID** — must match the button\'s ID exactly
+- **Ephemeral reply** — option to reply only visible to the clicker
+
+:::tip
+Use descriptive Custom IDs like \`verify-role\` or \`ticket-open\` to keep your workflow readable.
+:::`,
+
+    selectMenuHandlerTitle: 'Select Menu Handler',
+    selectMenuHandlerBody: `Triggers when a user **picks an option** from a select menu (dropdown).
+
+## Setup
+
+1. Send a message with a select menu via the **Add Select Menu** action
+2. Define options with unique values
+3. Add a **Select Menu Handler** with the matching Custom ID
+
+## Available variables
+
+- \`{values}\` — the selected option value(s)
+- \`{user}\` — who made the selection
+
+:::info
+Select menus can be configured as **single-select** or **multi-select**. For multi-select, \`{values}\` will contain all chosen options.
+:::`,
+
+    modalHandlerTitle: 'Modal Handler',
+    modalHandlerBody: `Triggers when a user **submits a modal** (popup form).
+
+## Creating a modal flow
+
+1. First, show the modal using an **Open Modal** action (typically from a button or command)
+2. Define the modal fields (text inputs)
+3. Add a **Modal Handler** with the matching Custom ID
+
+## Configuration
+
+- **Custom ID** — must match the modal\'s ID
+- Fields are accessible via \`{fields.fieldId}\`
+
+## Example: Ticket system
+
+1. User clicks a "Create Ticket" button
+2. A modal opens asking for subject and description
+3. The Modal Handler receives the submission
+4. Connected actions create a channel and post the ticket info
+
+:::tip
+Modals can have up to **5 text inputs** — use short or paragraph style.
+:::`,
+
+    // ── Actions ──
+    actionsTitle: 'Discord Actions',
+    actionsDesc: 'Send messages, manage roles, moderate — all the things your bot can do.',
+    sendMessageTitle: 'Send Message',
+    sendMessageBody: `The most common action — sends a text message to a Discord channel.
+
+## Configuration
+
+- **Channel** — select a specific channel or use \`{channel}\` for the current one
+- **Content** — the text to send (supports variables and Discord markdown)
+- **Reply** — toggle to make the message a reply to the triggering message
+
+## Discord Markdown
+
+- **Bold**: \`**text**\`
+- *Italic*: \`*text*\`
+- __Underline__: \`__text__\`
+- ~~Strikethrough~~: \`~~text~~\`
+- Code: \`\\\`code\\\`\`
+- Code block: \`\\\`\\\`\\\`lang\\ncode\\\`\\\`\\\`\`
+
+:::tip
+Combine the Send Message action with an **Embed** node for rich, formatted messages with colours, images, and fields.
+:::`,
+
+    editDeleteTitle: 'Edit & Delete Messages',
+    editDeleteBody: `## Edit a message
+
+Use the **Edit Message** action to modify a previously sent message:
+
+- **Message ID** — the ID of the message to edit (use \`{message.id}\` from a previous send)
+- **New content** — the updated text
+
+## Delete a message
+
+The **Delete Message** action removes a message:
+
+- **Message ID** — the ID to delete
+- **Channel** — where the message is
+
+:::warning
+The bot can only edit or delete messages it has sent, or messages in channels where it has the **Manage Messages** permission.
+:::`,
+
+    embedsTitle: 'Embeds',
+    embedsBody: `Embeds are **rich message cards** with colours, titles, images, and structured fields.
+
+## Embed fields
+
+- **Title** — bold header text
+- **Description** — main body text (supports markdown)
+- **Colour** — border colour (hex or preset)
+- **Thumbnail** — small image (top-right)
+- **Image** — large image at the bottom
+- **Footer** — small text at the bottom
+- **Author** — name and icon at the top
+- **Fields** — key-value pairs (inline or stacked)
+
+## Adding fields
+
+Click **"+ Add Field"** to add structured data:
+
+- **Name** — field title
+- **Value** — field content
+- **Inline** — display side-by-side with other inline fields
+
+:::tip
+You can send up to **10 embeds** in a single message. Use multiple embed nodes connected to one Send Message.
+:::`,
+
+    reactionsPinsTitle: 'Reactions & Pins',
+    reactionsPinsBody: `## Adding reactions
+
+The **Add Reaction** action adds an emoji reaction to a message:
+
+- **Message ID** — target message
+- **Emoji** — Unicode emoji or custom emoji ID
+
+## Pinning messages
+
+The **Pin Message** action pins a message to the channel:
+
+- **Message ID** — the message to pin
+
+:::info
+Discord limits pinned messages to **50 per channel**. The bot needs the **Manage Messages** permission to pin and add reactions.
+:::`,
+
+    threadsTitle: 'Threads',
+    threadsBody: `## Creating threads
+
+The **Create Thread** action creates a new thread:
+
+- **Name** — the thread title
+- **Channel** — parent channel
+- **Auto-archive** — duration before auto-archiving (1h, 24h, 3d, 7d)
+- **Message** — optionally create from an existing message
+
+## Sending to threads
+
+Use the **Send Message** action with the thread\'s channel ID to post inside a thread.
+
+:::tip
+Threads are great for keeping discussions organised — use them for ticket systems, feedback, or topic-specific conversations.
+:::`,
+
+    dmTitle: 'Direct Messages',
+    dmBody: `## Sending a DM
+
+The **Send DM** action sends a private message to a user:
+
+- **User** — the target user (use \`{user}\` or a specific ID)
+- **Content** — the message text
+- **Embed** — optional rich embed
+
+:::warning
+Some users have DMs disabled. Your workflow should handle the case where the DM fails. Consider adding a condition node to check for errors.
+:::
+
+:::tip
+Common DM use cases: welcome messages on join, moderation notifications (kick/ban reasons), verification codes.
+:::`,
+
+    // ── Interactions ──
+    interactionsTitle: 'Interactions',
+    interactionsDesc: 'Buttons, select menus, and modals — make your bot interactive.',
+    buttonsTitle: 'Buttons',
+    buttonsBody: `## Adding buttons to messages
+
+Use the **Add Button** component in a Send Message action:
+
+- **Style** — Primary (blue), Secondary (grey), Success (green), Danger (red), Link (URL)
+- **Label** — the button text
+- **Custom ID** — unique identifier (not needed for Link buttons)
+- **Emoji** — optional emoji before the label
+- **Disabled** — toggle to make the button unclickable
+
+## Button rows
+
+- Up to **5 buttons** per row
+- Up to **5 rows** per message (25 buttons max)
+
+## Handling clicks
+
+Connect a **Button Handler** with the matching Custom ID to respond when users click.
+
+:::tip
+Use the *Danger* style for destructive actions (delete, ban) to give a visual warning to users.
+:::`,
+
+    selectMenusTitle: 'Select Menus',
+    selectMenusBody: `## Types of select menus
+
+- **String Select** — custom options you define
+- **User Select** — lets users pick server members
+- **Role Select** — lets users pick roles
+- **Channel Select** — lets users pick channels
+- **Mentionable Select** — users or roles
+
+## Configuration (String Select)
+
+- **Custom ID** — unique identifier
+- **Placeholder** — greyed-out text before selection
+- **Options** — label, value, description, and optional emoji for each
+- **Min/Max values** — how many options can be selected
+
+:::tip
+Select menus are ideal for settings panels, role selectors, or any situation where users need to choose from a list.
+:::`,
+
+    modalsTitle: 'Modals (Popup Forms)',
+    modalsBody: `## What are modals?
+
+Modals are **popup forms** that appear over Discord. They can only be triggered by a button click or a slash command interaction.
+
+## Configuration
+
+- **Custom ID** — unique identifier
+- **Title** — displayed at the top of the popup
+- **Fields** — up to 5 text input fields
+
+## Text input types
+
+- **Short** — single-line input
+- **Paragraph** — multi-line input
+
+Each field has:
+
+- **Custom ID** — to retrieve the value
+- **Label** — shown above the field
+- **Placeholder** — hint text
+- **Required** — whether the user must fill it in
+- **Min/Max length** — character limits
+
+:::tip
+Modals are perfect for feedback forms, ticket creation, application submissions, and bug reports.
+:::`,
+
+    // ── Moderation ──
+    moderationTitle: 'Moderation',
+    moderationDesc: 'Keep your server safe — kicks, bans, timeouts, and permission checks.',
+    kickBanTitle: 'Kick & Ban',
+    kickBanBody: `## Kick
+
+The **Kick Member** action removes a user from the server (they can rejoin with an invite):
+
+- **User** — who to kick
+- **Reason** — logged in Discord\'s audit log
+
+## Ban
+
+The **Ban Member** action permanently removes and blocks a user:
+
+- **User** — who to ban
+- **Reason** — audit log reason
+- **Delete messages** — remove their messages from the last 0-7 days
+
+:::warning
+The bot\'s role must be **higher** in the role hierarchy than the target user\'s highest role. The bot also needs the **Kick Members** and/or **Ban Members** permissions.
+:::
+
+:::tip
+Combine with a **Condition** node to check roles before kicking — e.g. don\'t kick users with the "Moderator" role.
+:::`,
+
+    timeoutMuteTitle: 'Timeout & Mute',
+    timeoutMuteBody: `## Timeout
+
+The **Timeout Member** action temporarily prevents a user from sending messages or joining voice:
+
+- **User** — target member
+- **Duration** — how long (1 minute to 28 days)
+- **Reason** — audit log reason
+
+## Removing a timeout
+
+Use the **Remove Timeout** action or set the duration to \`0\`.
+
+:::info
+Timeouts are Discord\'s built-in mute feature. They\'re preferable to role-based muting because they:
+- Show a countdown to the user
+- Auto-expire
+- Don\'t require a "Muted" role setup
+:::`,
+
+    bulkDeleteTitle: 'Bulk Delete Messages',
+    bulkDeleteBody: `The **Bulk Delete** action removes multiple messages at once:
+
+- **Channel** — which channel to purge
+- **Count** — number of messages to delete (2-100)
+- **Filter** — optionally filter by user or content
+
+## Limitations
+
+- Cannot delete messages **older than 14 days** (Discord API restriction)
+- Maximum **100 messages** per action
+- Requires the **Manage Messages** permission
+
+:::tip
+Combine with a **Command Handler** to create a /purge command. Add a permission check condition to ensure only moderators can use it.
+:::`,
+
+    permissionsTitle: 'Permission Checks',
+    permissionsBody: `## Checking permissions
+
+Use a **Condition** node to verify permissions before executing an action:
+
+- **Has Role** — check if the user has a specific role
+- **Has Permission** — check for Discord permissions (Manage Messages, Kick, Ban, etc.)
+- **Is Bot Owner** — check if the user owns the server
+
+## Permission hierarchy
+
+Discord permissions follow a hierarchy:
+
+1. Server owner (all permissions)
+2. Administrator role (all permissions)
+3. Role-based permissions (highest role wins)
+4. Channel-specific overrides
+
+:::warning
+Always add permission checks to moderation commands. Without them, any user could use your kick/ban workflows!
+:::
+
+:::tip
+Create a reusable "moderator check" by combining multiple conditions — e.g. has Moderator role OR has Manage Messages permission.
+:::`,
+
+    // ── Guild ──
+    guildTitle: 'Roles & Server',
+    guildDesc: 'Manage roles, channels, emojis, and server settings.',
+    rolesTitle: 'Role Management',
+    rolesBody: `## Adding roles
+
+The **Add Role** action gives a role to a member:
+
+- **User** — target member
+- **Role** — which role to add
+
+## Removing roles
+
+The **Remove Role** action takes a role away:
+
+- **User** — target member
+- **Role** — which role to remove
+
+## Creating roles
+
+The **Create Role** action makes a new role:
+
+- **Name** — role name
+- **Colour** — hex colour code
+- **Permissions** — which permissions to grant
+- **Hoist** — show separately in the member list
+- **Mentionable** — allow anyone to mention this role
+
+:::warning
+The bot\'s highest role must be **above** the target role in the server\'s role hierarchy.
+:::
+
+:::tip
+Use roles with the **guildMemberAdd** event to create auto-role workflows — give new members a role on join.
+:::`,
+
+    channelsTitle: 'Channel Management',
+    channelsBody: `## Creating channels
+
+The **Create Channel** action:
+
+- **Name** — channel name
+- **Type** — text, voice, category, announcement, stage, forum
+- **Category** — parent category
+- **Topic** — channel description (text channels)
+- **Permission overrides** — per-role or per-user permissions
+
+## Editing channels
+
+The **Edit Channel** action modifies an existing channel:
+
+- Change name, topic, slowmode, NSFW flag, etc.
+
+## Deleting channels
+
+The **Delete Channel** action removes a channel permanently.
+
+:::warning
+Channel deletion is **irreversible**! All messages in the channel will be lost. Consider adding a confirmation step.
+:::`,
+
+    emojisStickersTitle: 'Emojis & Stickers',
+    emojisStickersBody: `## Custom emojis
+
+The **Create Emoji** action uploads a custom emoji:
+
+- **Name** — emoji name (alphanumeric and underscores)
+- **Image** — URL or base64 of the image
+- **Roles** — restrict usage to specific roles (optional)
+
+## Stickers
+
+The **Create Sticker** action adds a custom sticker:
+
+- **Name** — sticker name
+- **Description** — what the sticker represents
+- **Tags** — related emoji for suggestions
+- **File** — the sticker image (PNG, APNG, or Lottie)
+
+:::info
+Free servers are limited to **50 emojis** and **5 stickers**. Boosted servers get more slots.
+:::`,
+
+    invitesWebhooksTitle: 'Invites & Webhooks',
+    invitesWebhooksBody: `## Invites
+
+The **Create Invite** action generates a server invite:
+
+- **Channel** — which channel the invite leads to
+- **Max uses** — how many times it can be used (0 = unlimited)
+- **Max age** — expiration time in seconds (0 = never)
+- **Temporary** — kick the member when they disconnect if they don\'t get a role
+
+## Webhooks
+
+The **Create Webhook** action sets up a webhook:
+
+- **Channel** — target channel
+- **Name** — webhook display name
+- **Avatar** — webhook profile picture
+
+The **Send Webhook** action posts a message via webhook:
+
+- **URL** — the webhook URL
+- **Content** — message text
+- **Username** — override the webhook name
+- **Avatar URL** — override the profile picture
+
+:::tip
+Webhooks are great for cross-server notifications, logging systems, or sending messages that appear to come from a custom user.
+:::`,
+
+    // ── Voice ──
+    voiceTitle: 'Voice Channels',
+    voiceDesc: 'Join, leave, play audio, and manage voice connections.',
+    joinLeaveTitle: 'Join & Leave Voice',
+    joinLeaveBody: `## Joining a voice channel
+
+The **Join Voice** action connects the bot to a voice channel:
+
+- **Channel** — which voice channel to join
+- **Self Deaf** — whether the bot deafens itself (recommended)
+- **Self Mute** — whether the bot mutes itself
+
+## Leaving
+
+The **Leave Voice** action disconnects the bot from its current voice channel.
+
+:::info
+The bot needs the **Connect** and **Speak** permissions for the target voice channel.
+:::`,
+
+    playAudioTitle: 'Play Audio',
+    playAudioBody: `## Playing audio
+
+The **Play Audio** action streams audio in a voice channel:
+
+- **Source** — URL to an audio file or stream
+- **Volume** — playback volume (0-100%)
+
+## Controls
+
+- **Pause** — temporarily stop playback
+- **Resume** — continue playing
+- **Stop** — end playback completely
+
+:::tip
+Supported formats include MP3, OGG, and WAV. For best performance, use direct links to audio files.
+:::`,
+
+    moveDisconnectTitle: 'Move & Disconnect Users',
+    moveDisconnectBody: `## Moving users
+
+The **Move Member** action transfers a user to a different voice channel:
+
+- **User** — who to move
+- **Channel** — destination voice channel
+
+## Disconnecting users
+
+The **Disconnect Member** action removes a user from voice:
+
+- **User** — who to disconnect
+
+:::warning
+Both actions require the **Move Members** permission. The bot cannot move users to channels it doesn\'t have access to.
+:::`,
+
+    // ── Bot ──
+    botTitle: 'Bot Settings',
+    botDesc: 'Configure your bot\'s presence, avatar, and nickname.',
+    presenceTitle: 'Bot Presence & Status',
+    presenceBody: `## Setting the status
+
+The **Set Presence** action changes your bot\'s online status:
+
+- **Status** — Online, Idle, Do Not Disturb, or Invisible
+- **Activity type** — Playing, Streaming, Listening, Watching, Competing
+- **Activity text** — what the bot is "playing", "watching", etc.
+
+## Dynamic presence
+
+Use variables to create dynamic status messages:
+
+- \`Playing with {guild.memberCount} members\`
+- \`Watching {guild.name}\`
+
+:::tip
+Set the presence in a **clientReady** event handler so it\'s applied every time the bot starts.
+:::`,
+
+    nicknameAvatarTitle: 'Nickname & Avatar',
+    nicknameAvatarBody: `## Changing the nickname
+
+The **Set Nickname** action changes the bot\'s nickname in a specific server:
+
+- **Nickname** — the new display name (leave empty to reset)
+
+## Changing the avatar
+
+The **Set Avatar** action updates the bot\'s profile picture:
+
+- **Image URL** — link to the new avatar image
+
+:::warning
+Discord rate-limits avatar changes to **twice per hour**. Don\'t use this in frequently triggered workflows!
+:::`,
+
+    // ── Logic ──
+    logicTitle: 'Logic & Flow',
+    logicDesc: 'Conditions, loops, variables, and data manipulation.',
+    conditionsTitle: 'Conditions (If/Else)',
+    conditionsBody: `The **Condition** node lets you create branching logic — if something is true, do X; otherwise, do Y.
+
+## Configuration
+
+- **Left value** — the value to check (e.g. \`{user.id}\`)
+- **Operator** — equals, not equals, contains, greater than, less than, etc.
+- **Right value** — the comparison value
+
+## Outputs
+
+- **True** path (green handle) — executes when the condition is met
+- **False** path (red handle) — executes when it\'s not
+
+## Combining conditions
+
+Chain multiple condition nodes for complex logic:
+
+- AND: connect conditions in series
+- OR: connect the same trigger to multiple condition branches
+
+:::tip
+Use conditions to check permissions, compare values, filter events, or create different responses based on user input.
+:::`,
+
+    loopsTitle: 'Loops',
+    loopsBody: `The **Loop** node repeats a set of actions multiple times.
+
+## Types
+
+- **For loop** — repeat a fixed number of times
+- **For Each** — iterate over a list (e.g. server members, roles)
+- **While** — repeat while a condition is true
+
+## Configuration
+
+- **Count** (for loop) — how many iterations
+- **List** (for each) — the data to iterate over
+- **Condition** (while) — checked before each iteration
+
+## Loop variables
+
+Inside the loop, you can access:
+
+- \`{loop.index}\` — current iteration number (starts at 0)
+- \`{loop.value}\` — current item (for-each loops)
+- \`{loop.length}\` — total number of iterations
+
+:::warning
+Avoid infinite loops! Always ensure your while condition will eventually become false. DisFlow has a safety limit of 1000 iterations.
+:::`,
+
+    variablesTitle: 'Variables',
+    variablesBody: `Variables let you **store and reuse data** across your workflow.
+
+## Setting variables
+
+Use the **Set Variable** action:
+
+- **Name** — variable name (e.g. \`counter\`)
+- **Value** — the data to store
+
+## Using variables
+
+Reference variables with curly braces: \`{counter}\`, \`{userName}\`, etc.
+
+## Scope
+
+- **Workflow variables** — available within the current execution
+- **Global variables** — persist across executions (stored in the database)
+
+## Variable types
+
+- **String** — text data
+- **Number** — integers and decimals
+- **Boolean** — true/false
+- **Array** — lists of values
+- **Object** — key-value pairs
+
+:::tip
+Use the **Set Variable** action right after a trigger to capture and name important data for use later in the workflow.
+:::`,
+
+    mathStringTitle: 'Math & String Operations',
+    mathStringBody: `## Math operations
+
+The **Math** node performs calculations:
+
+- **Add / Subtract / Multiply / Divide**
+- **Modulo** — remainder after division
+- **Power** — exponentiation
+- **Random** — generate a random number
+- **Round / Floor / Ceil**
+- **Min / Max** — of two values
+
+## String operations
+
+The **String** node manipulates text:
+
+- **Uppercase / Lowercase**
+- **Trim** — remove whitespace
+- **Replace** — find and replace text
+- **Split** — divide text into an array
+- **Slice** — extract a portion
+- **Length** — character count
+- **Includes** — check if text contains a substring
+
+:::tip
+Chain Math and String operations with variables to build dynamic, data-driven responses.
+:::`,
+
+    httpWebhookTitle: 'HTTP Requests & Webhooks',
+    httpWebhookBody: `## Making HTTP requests
+
+The **HTTP Request** action calls external APIs:
+
+- **Method** — GET, POST, PUT, DELETE, PATCH
+- **URL** — the API endpoint
+- **Headers** — custom headers (e.g. Authorization)
+- **Body** — request payload (JSON)
+
+## Response
+
+The response is available as variables:
+
+- \`{http.status}\` — status code
+- \`{http.body}\` — response body
+- \`{http.headers}\` — response headers
+
+## Example: Weather bot
+
+1. Command Handler: /weather {city}
+2. HTTP Request: GET https://api.example.com/weather?city={args.city}
+3. Send Message: The weather in {args.city} is {http.body.temp}°C
+
+:::warning
+Be cautious with external APIs — they may rate-limit your requests. Add error handling for failed requests.
+:::`,
+
+    // ── Database ──
+    databaseTitle: 'Database',
+    databaseDesc: 'Store and query persistent data with your bot\'s built-in database.',
+    sqlBasicsTitle: 'Database Basics',
+    sqlBasicsBody: `DisFlow provides each bot with a **built-in MySQL database** for persistent data storage.
+
+## What can you store?
+
+- User profiles and levels
+- Economy (coins, inventory)
+- Warnings and moderation logs
+- Custom settings per server
+- Any structured data your bot needs
+
+## Accessing the database
+
+1. In the Workflow Editor, use **Database** nodes (Create Table, Select, Insert, Update, Delete)
+2. From the Dashboard, use the **Database Viewer** to browse tables
+
+:::tip
+Plan your database structure before building. Think about what data you need to store and how it relates.
+:::`,
+
+    createTableTitle: 'Creating Tables',
+    createTableBody: `The **Create Table** action sets up a new database table.
+
+## Configuration
+
+- **Table name** — alphanumeric and underscores (e.g. \`user_levels\`)
+- **Columns** — define each column with:
+  - **Name** — column name
+  - **Type** — INT, VARCHAR(255), TEXT, BOOLEAN, DATETIME, etc.
+  - **Primary Key** — unique identifier
+  - **Auto-increment** — automatically assign IDs
+  - **Default** — default value
+  - **Not null** — require a value
+
+## Example: User levels table
+
+- \`id\` — INT, primary key, auto-increment
+- \`user_id\` — VARCHAR(20), not null
+- \`guild_id\` — VARCHAR(20), not null
+- \`xp\` — INT, default 0
+- \`level\` — INT, default 1
+
+:::info
+Tables are created per-bot. Each bot has its own isolated database.
+:::`,
+
+    selectInsertTitle: 'Querying Data',
+    selectInsertBody: `## SELECT (reading data)
+
+The **Select** action retrieves data:
+
+- **Table** — which table to query
+- **Columns** — which columns to return (* for all)
+- **Where** — conditions to filter results
+- **Order by** — sort results
+- **Limit** — maximum rows to return
+
+Results are available as \`{db.rows}\` (array) and \`{db.rows[0].columnName}\`.
+
+## INSERT (writing data)
+
+The **Insert** action adds a new row:
+
+- **Table** — target table
+- **Values** — key-value pairs for each column
+
+## UPDATE
+
+The **Update** action modifies existing rows:
+
+- **Table** — target table
+- **Set** — which columns to change
+- **Where** — which rows to update
+
+## DELETE
+
+The **Delete** action removes rows:
+
+- **Table** — target table
+- **Where** — which rows to delete
+
+:::warning
+Always use a WHERE clause with UPDATE and DELETE to avoid affecting all rows!
+:::`,
+
+    dbViewerTitle: 'Database Viewer',
+    dbViewerBody: `The **Database Viewer** is available from the Dashboard sidebar.
+
+## Features
+
+- **Browse tables** — see all tables for a bot
+- **View data** — paginated table view of rows
+- **Search** — filter rows by column values
+- **Edit** — modify values directly in the viewer
+- **Delete** — remove rows from the interface
+- **Export** — download table data as CSV
+
+## Accessing the viewer
+
+1. Go to **Dashboard → Databases**
+2. Select a bot to view its tables
+3. Click a table name to browse its data
+
+:::tip
+Use the Database Viewer for debugging — check if your workflows are reading and writing data correctly.
+:::`,
+
+    // ── Advanced ──
+    advancedTitle: 'Advanced Features',
+    advancedDesc: 'Code execution, AI chat, templates, and power-user features.',
+    codeExecTitle: 'Custom Code Execution',
+    codeExecBody: `The **Code** node lets you write custom JavaScript that runs inside your workflow.
+
+## Configuration
+
+- **Code** — your JavaScript code
+- **Inputs** — variables available inside the code
+- **Output** — the variable name to store the result
+
+## Available APIs
+
+Inside the code node, you have access to:
+
+- \`inputs\` — the variables you defined
+- \`return\` — return a value to store in the output variable
+
+## Example: Random colour
+
+\`\`\`javascript
+const colours = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00'];
+return colours[Math.floor(Math.random() * colours.length)];
+\`\`\`
+
+:::warning
+Code executes in a sandboxed environment. You cannot access the file system, network, or Node.js modules.
+:::`,
+
+    canvasCardTitle: 'Canvas Cards & Organisation',
+    canvasCardBody: `## Grouping nodes
+
+Use **Canvas Cards** (groups) to visually organise your workflow:
+
+- Select multiple nodes (Shift + click)
+- Right-click → "Group Selection"
+- Give the group a name and colour
+
+## Benefits
+
+- Keep related nodes together
+- Add descriptions to explain sections
+- Collapse groups to simplify the view
+- Move groups as a single unit
+
+:::tip
+Use groups to separate different features — e.g. one group for the welcome system, another for moderation, and another for the levelling system.
+:::`,
+
+    templatesTitle: 'Templates',
+    templatesBody: `Templates are **pre-built workflows** that you can insert into your canvas with one click.
+
+## Using templates
+
+1. Open the **Templates** tab in the left sidebar
+2. Browse by category or search by name
+3. Click **Insert** to add the template to your canvas
+
+## Available categories
+
+- **Moderation** — kick, ban, warn, purge
+- **User** — welcome, goodbye, levels
+- **Server** — auto-role, logging, feedback
+- **Utility** — ping, help, info commands
+
+## Customising templates
+
+After inserting a template:
+
+1. Review the nodes and connections
+2. Modify settings (channel names, messages, etc.)
+3. Save and deploy
+
+:::tip
+Templates are a great starting point. Insert one, learn from the node layout, and customise it to your needs.
+:::`,
+
+    aiChatTitle: 'AI Chat Assistant',
+    aiChatBody: `The **AI Chat** is available from the bottom bar of the Workflow Editor.
+
+## What it can help with
+
+- **Explain nodes** — ask what a specific node does
+- **Suggest workflows** — describe what you want and get step-by-step guidance
+- **Debug issues** — paste an error and get help fixing it
+- **Answer questions** — anything related to DisFlow or Discord bots
+
+## How to use
+
+1. Click the **AI Chat** button in the bottom bar
+2. Type your question or describe what you want to build
+3. The AI responds with explanations and suggestions
+
+:::tip
+Be specific in your questions! Instead of "How do I make a bot?", ask "How do I create a /ban command that checks for moderator permissions?"
+:::`,
+
+    // ── Deployment ──
+    deploymentTitle: 'Deployment',
+    deploymentDesc: 'Save, deploy, and troubleshoot your bot workflows.',
+    saveDeployTitle: 'Save & Deploy',
+    saveDeployBody: `## Saving
+
+Click the **Save** button (or Ctrl + S) to save your workflow. This stores your nodes, connections, and configurations.
+
+## Deploying
+
+Click the **Deploy** button to push your workflow to your live bot:
+
+1. The bot rebuilds automatically with your latest changes
+2. It restarts and reconnects to Discord
+3. Your new workflows are active
+
+## What\'s the difference?
+
+- **Save** — saves your work but doesn\'t affect the running bot
+- **Deploy** — pushes saved changes to the live bot
+
+:::tip
+Save frequently during editing! Deploy only when you\'re ready to go live with your changes.
+:::
+
+:::warning
+Deploying restarts the bot. There will be a brief moment where the bot is offline (usually less than 10 seconds).
+:::`,
+
+    collaborationTitle: 'Collaboration & Sharing',
+    collaborationBody: `## Sharing workflows
+
+You can share workflows with other DisFlow users:
+
+1. **Export** your workflow as JSON
+2. Send the file to your collaborator
+3. They **Import** it into their editor
+
+## Team features
+
+- **Members page** — invite team members to manage your bots
+- **Role-based access** — assign editor or viewer roles
+- **Activity log** — see who made changes and when
+
+:::info
+Team collaboration features may vary depending on your subscription plan.
+:::`,
+
+    troubleshootingTitle: 'Troubleshooting',
+    troubleshootingBody: `## Common issues
+
+### Bot doesn\'t come online
+- Check that your **token** is correct and not expired
+- Verify the required **intents** are enabled
+- Ensure the bot was **invited** to your server
+
+### Slash commands don\'t appear
+- Discord caches commands — wait up to **1 hour** for new commands
+- Check that the bot has the **applications.commands** scope
+- Verify the command name doesn\'t conflict with other bots
+
+### Bot doesn\'t respond
+- Check the **Console** (bottom bar) for error messages
+- Verify all nodes are **connected** correctly
+- Ensure required configuration fields are filled
+- Check **permission** settings in Discord
+
+### Workflow errors
+- Open the **Console** to see detailed error logs
+- Check for disconnected nodes
+- Verify variable names are spelled correctly
+- Ensure database tables exist before querying them
+
+:::tip
+The Console is your best debugging tool! It shows real-time logs of everything your bot does. Open it from the bottom bar of the Workflow Editor.
+:::
+
+## Still stuck?
+
+- Check the **Discord** support server for community help
+- Browse this documentation for detailed guides
+- Use the **AI Chat** assistant in the editor`,
   },
 };
 

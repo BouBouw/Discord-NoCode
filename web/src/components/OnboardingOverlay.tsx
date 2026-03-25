@@ -3,6 +3,9 @@ import { X, ChevronRight, ChevronLeft, Sparkles, Rocket, SkipForward } from 'luc
 import { useOnboarding, ONBOARDING_STEPS, type OnboardingCategory } from '../contexts/OnboardingContext';
 import { useTranslation } from '../hooks/useTranslation';
 
+// Steps that require drag-and-drop from sidebar to canvas — spotlight both areas
+const DRAG_DROP_STEPS = new Set(['workflow-add-trigger', 'workflow-add-action']);
+
 // ─── Category metadata ────────────────────────────────────────────────────────
 
 const CATEGORY_META: Record<OnboardingCategory, { icon: string; colorVar: string }> = {
@@ -25,11 +28,13 @@ export default function OnboardingOverlay() {
   const { active, step, currentStep, totalSteps, next, prev, skip } = useOnboarding();
   const { t } = useTranslation();
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+  const [canvasRect, setCanvasRect] = useState<DOMRect | null>(null);
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
   const [arrowStyle, setArrowStyle] = useState<React.CSSProperties>({});
   const [arrowDir, setArrowDir] = useState<'top' | 'bottom' | 'left' | 'right'>('top');
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [animating, setAnimating] = useState(false);
+  const needsDragDrop = step ? DRAG_DROP_STEPS.has(step.id) : false;
 
   // Category progress
   const categories = ['welcome', 'dashboard', 'workflow'] as const;
@@ -54,6 +59,13 @@ export default function OnboardingOverlay() {
 
     const rect = getTargetRect(step.target);
     setTargetRect(rect);
+
+    // Also capture canvas rect for drag-and-drop steps
+    if (DRAG_DROP_STEPS.has(step.id)) {
+      setCanvasRect(getTargetRect('[data-onboarding="canvas"]'));
+    } else {
+      setCanvasRect(null);
+    }
 
     if (!rect) {
       // Target not found — center
@@ -143,32 +155,53 @@ export default function OnboardingOverlay() {
 
   return (
     <>
-      {/* Backdrop overlay with spotlight cutout */}
-      <div
-        className="fixed inset-0 z-[9998] transition-opacity duration-300"
-        style={{ background: 'rgba(0,0,0,0.55)' }}
-        onClick={e => {
-          // Don't close on backdrop click — only Skip button
-          e.stopPropagation();
-        }}
-      >
-        {/* Spotlight cutout */}
-        {targetRect && (
-          <div
-            className="absolute rounded-xl transition-all duration-300"
-            style={{
-              top: targetRect.top - 8,
-              left: targetRect.left - 8,
-              width: targetRect.width + 16,
-              height: targetRect.height + 16,
-              boxShadow: '0 0 0 9999px rgba(0,0,0,0.55)',
-              background: 'transparent',
-              border: `2px solid ${catMeta.colorVar}`,
-              pointerEvents: 'none',
-            }}
-          />
-        )}
+      {/* Backdrop with transparent spotlight hole — clicks pass through */}
+      <div className="fixed inset-0 z-[9998]" style={{ pointerEvents: 'none' }}>
+        <svg width="100%" height="100%" className="block">
+          <defs>
+            <mask id="onboarding-mask">
+              <rect width="100%" height="100%" fill="white" />
+              {targetRect && (
+                <rect
+                  x={targetRect.left - 8}
+                  y={targetRect.top - 8}
+                  width={targetRect.width + 16}
+                  height={targetRect.height + 16}
+                  rx={12}
+                  fill="black"
+                />
+              )}
+              {needsDragDrop && canvasRect && (
+                <rect
+                  x={canvasRect.left}
+                  y={canvasRect.top}
+                  width={canvasRect.width}
+                  height={canvasRect.height}
+                  rx={8}
+                  fill="black"
+                />
+              )}
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill="rgba(0,0,0,0.55)" mask="url(#onboarding-mask)" />
+        </svg>
       </div>
+
+      {/* Spotlight border ring (visual only, no click blocking) */}
+      {targetRect && (
+        <div
+          className="fixed rounded-xl transition-all duration-300 z-[9998]"
+          style={{
+            top: targetRect.top - 8,
+            left: targetRect.left - 8,
+            width: targetRect.width + 16,
+            height: targetRect.height + 16,
+            border: `2px solid ${catMeta.colorVar}`,
+            boxShadow: `0 0 0 4px ${catMeta.colorVar}30, inset 0 0 30px ${catMeta.colorVar}10`,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
 
       {/* Tooltip */}
       <div

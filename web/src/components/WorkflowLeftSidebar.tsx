@@ -135,10 +135,26 @@ function SettingsPanel({ settings, onSettingsChange, description, onDescriptionC
 function HelpPanel() {
   const { t } = useTranslation();
   const helpSections = [
-    { title: t.workflow.gettingStarted, items: [t.workflow.canvasBasics, t.workflow.addHandler, t.workflow.connectNodes] },
-    { title: t.workflow.handlers,       items: [t.workflow.commandHandler, t.workflow.eventHandler, t.workflow.permissionsRoles] },
-    { title: t.workflow.discordActions, items: [t.workflow.messagesEmbeds, t.workflow.roleManagement, t.workflow.moderation] },
-    { title: t.workflow.database,       items: [t.workflow.sqlQuery, t.workflow.createTableHelp, t.workflow.selectInsert] },
+    { title: t.workflow.gettingStarted, items: [
+      { label: t.workflow.canvasBasics,    help: 'canvas',   article: 'canvas-basics' },
+      { label: t.workflow.addHandler,      help: 'handlers', article: 'command-handler' },
+      { label: t.workflow.connectNodes,    help: 'canvas',   article: 'connect-nodes' },
+    ]},
+    { title: t.workflow.handlers, items: [
+      { label: t.workflow.commandHandler,  help: 'handlers', article: 'command-handler' },
+      { label: t.workflow.eventHandler,    help: 'handlers', article: 'event-handler' },
+      { label: t.workflow.permissionsRoles, help: 'moderation', article: 'permissions' },
+    ]},
+    { title: t.workflow.discordActions, items: [
+      { label: t.workflow.messagesEmbeds,  help: 'actions',  article: 'embeds' },
+      { label: t.workflow.roleManagement,  help: 'guild',    article: 'roles' },
+      { label: t.workflow.moderation,      help: 'moderation', article: 'kick-ban' },
+    ]},
+    { title: t.workflow.database, items: [
+      { label: t.workflow.sqlQuery,        help: 'database', article: 'sql-basics' },
+      { label: t.workflow.createTableHelp, help: 'database', article: 'create-table' },
+      { label: t.workflow.selectInsert,    help: 'database', article: 'select-insert' },
+    ]},
   ];
   return (
     <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
@@ -150,7 +166,8 @@ function HelpPanel() {
           <div className="space-y-0.5">
             {section.items.map(item => (
               <button
-                key={item}
+                key={item.label}
+                onClick={() => window.open(`/documentation?help=${item.help}&article=${item.article}`, '_blank')}
                 className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs transition group text-left"
                 style={{ color: TEXT_MUTED }}
                 onMouseEnter={e => {
@@ -162,7 +179,7 @@ function HelpPanel() {
                   (e.currentTarget as HTMLElement).style.color = TEXT_MUTED;
                 }}
               >
-                <span>{item}</span>
+                <span>{item.label}</span>
                 <ExternalLink className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-100 transition" />
               </button>
             ))}

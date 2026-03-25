@@ -3,13 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Settings, User, Users, Bell, CreditCard, Check, Globe, Palette,
   Zap, Shield, ChevronRight, ExternalLink, Star, ChevronDown,
-  Bot, Terminal, Database, Sparkles, Crown,
+  Bot, Terminal, Database, Sparkles, Crown, Link2, Unlink,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useUserSettings, type Language, type BotTheme } from '../../hooks/useUserSettings';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useOnboarding } from '../../contexts/OnboardingContext';
-import { subscriptionAPI } from '../../services/api';
+import { subscriptionAPI, apiRequest } from '../../services/api';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -177,9 +177,28 @@ export default function SettingsPage() {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('month');
+  const [discordLinkStatus, setDiscordLinkStatus] = useState<'success' | 'error' | null>(null);
+  const [discordLinkReason, setDiscordLinkReason] = useState<string | null>(null);
+  const [unlinkLoading, setUnlinkLoading] = useState(false);
 
   // Refresh profile on mount (gets latest plan info)
   useEffect(() => { refreshProfile(); }, [refreshProfile]);
+
+  // Handle Discord link callback result
+  useEffect(() => {
+    const linkResult = searchParams.get('discord_link');
+    if (!linkResult) return;
+    setDiscordLinkStatus(linkResult === 'success' ? 'success' : 'error');
+    setDiscordLinkReason(searchParams.get('reason'));
+    if (linkResult === 'success') refreshProfile();
+    // Clean URL params
+    const params = new URLSearchParams(searchParams);
+    params.delete('discord_link');
+    params.delete('reason');
+    navigate(`/dashboard/settings${params.toString() ? `?${params}` : ''}`, { replace: true });
+    // Auto-dismiss after 5s
+    setTimeout(() => { setDiscordLinkStatus(null); setDiscordLinkReason(null); }, 5000);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // On redirect from Stripe checkout (?success=true), verify session and sync subscription
   useEffect(() => {
@@ -211,6 +230,30 @@ export default function SettingsPage() {
   const isDirty =
     draft.defaultLanguage !== settings.defaultLanguage ||
     draft.defaultBotTheme !== settings.defaultBotTheme;
+
+  function handleLinkDiscord() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3008/api';
+    window.location.href = `${API_BASE}/auth/discord/link?token=${encodeURIComponent(token)}`;
+  }
+
+  async function handleUnlinkDiscord() {
+    setUnlinkLoading(true);
+    try {
+      await apiRequest('/auth/discord/unlink', { method: 'POST' });
+      await refreshProfile();
+      setDiscordLinkStatus('success');
+      setDiscordLinkReason('unlinked');
+      setTimeout(() => { setDiscordLinkStatus(null); setDiscordLinkReason(null); }, 5000);
+    } catch {
+      setDiscordLinkStatus('error');
+      setDiscordLinkReason('unlink_failed');
+      setTimeout(() => { setDiscordLinkStatus(null); setDiscordLinkReason(null); }, 5000);
+    } finally {
+      setUnlinkLoading(false);
+    }
+  }
 
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })
@@ -274,6 +317,23 @@ export default function SettingsPage() {
             <>
               {/* Profile card */}
               <SectionCard title={t.settings.profile} subtitle={t.settings.profileDesc}>
+                {/* Discord link feedback banner */}
+                {discordLinkStatus && (
+                  <div
+                    className="flex items-center gap-2.5 rounded-xl px-3.5 py-3 mb-4 text-sm"
+                    style={{
+                      backgroundColor: discordLinkStatus === 'success' ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+                      border: `1px solid ${discordLinkStatus === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                      color: discordLinkStatus === 'success' ? '#22c55e' : '#ef4444',
+                    }}
+                  >
+                    {discordLinkStatus === 'success'
+                      ? (discordLinkReason === 'unlinked' ? t.settings.discordUnlinkSuccess : t.settings.discordLinkSuccess)
+                      : discordLinkReason === 'email_mismatch' ? t.settings.discordEmailMismatch
+                      : discordLinkReason === 'already_linked' ? t.settings.discordAlreadyLinked
+                      : t.settings.discordLinkFailed}
+                  </div>
+                )}
                 <div className="flex items-center gap-4">
                   <div
                     className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white shrink-0 uppercase"
@@ -288,20 +348,27 @@ export default function SettingsPage() {
                     )}
                     <div className="flex items-center gap-2 mt-2 flex-wrap">
                       {user?.discord_id ? (
-                        <span
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+                        <button
+                          onClick={handleUnlinkDiscord}
+                          disabled={unlinkLoading}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
                           style={{ backgroundColor: 'rgba(88,101,242,0.15)', color: '#7289ff' }}
+                          title={t.settings.unlinkDiscord}
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-[#7289ff]" />
                           {t.settings.discordLinked}
-                        </span>
+                          <Unlink className="w-3 h-3 ml-0.5 opacity-70" />
+                        </button>
                       ) : (
-                        <span
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-                          style={{ backgroundColor: 'var(--t-s2)', color: 'var(--t-m)' }}
+                        <button
+                          onClick={handleLinkDiscord}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
+                          style={{ backgroundColor: 'rgba(88,101,242,0.15)', color: '#7289ff' }}
+                          title={t.settings.linkDiscordDesc}
                         >
-                          {t.settings.discordNotLinked}
-                        </span>
+                          <Link2 className="w-3 h-3" />
+                          {t.settings.linkDiscord}
+                        </button>
                       )}
                       <span
                         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"

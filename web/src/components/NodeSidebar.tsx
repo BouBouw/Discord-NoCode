@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, X, ArrowRight } from 'lucide-react';
 import { NODE_TYPES, SIDEBAR_HIERARCHY, type NodeType, type CategoryDef } from '../constants/nodeTypes';
 import { useTranslation } from '../hooks/useTranslation';
+import { useOnboarding } from '../contexts/OnboardingContext';
 
 const CAT_DESC_KEYS: Record<string, string> = {
   handlers: 'catHandlersDesc', bot: 'catBotDesc', actions: 'catActionsDesc',
@@ -66,10 +67,23 @@ interface NodeSidebarProps {
 
 export default function NodeSidebar({ onDragStart, onAddNode, 'data-onboarding': dataOnboarding }: NodeSidebarProps) {
   const { t } = useTranslation();
+  const { active: onboardingActive, step: onboardingStep } = useOnboarding();
   const [collapsed, setCollapsed]        = useState(false);
   const [view, setView]                  = useState<'categories' | 'nodes'>('categories');
   const [selectedCategory, setSelected] = useState<CategoryDef | null>(null);
   const [search, setSearch]              = useState('');
+
+  // Auto-open the right category during onboarding
+  useEffect(() => {
+    if (!onboardingActive || !onboardingStep) return;
+    if (onboardingStep.id === 'workflow-add-trigger') {
+      const handlers = SIDEBAR_HIERARCHY.find(c => c.id === 'handlers');
+      if (handlers) { setSelected(handlers); setView('nodes'); setCollapsed(false); }
+    } else if (onboardingStep.id === 'workflow-add-action') {
+      const actions = SIDEBAR_HIERARCHY.find(c => c.id === 'actions');
+      if (actions) { setSelected(actions); setView('nodes'); setCollapsed(false); }
+    }
+  }, [onboardingActive, onboardingStep]);
 
   const allNodes = useMemo(() =>
     SIDEBAR_HIERARCHY.flatMap(cat =>

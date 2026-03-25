@@ -895,6 +895,7 @@ export default function WorkflowEditorPage() {
     <div className="flex flex-col h-screen" style={{ ...thV, background: 'var(--t-bg)' }}>
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <header
+        data-onboarding="wf-header"
         className="h-14 flex items-center px-4 gap-4 shrink-0"
         style={{ background: 'var(--t-s)', borderBottom: '1px solid var(--t-bd)' }}
       >
@@ -1007,6 +1008,7 @@ export default function WorkflowEditorPage() {
           {/* Deploy */}
           {id && id !== 'new' && (
             <button
+              data-onboarding="deploy-btn"
               onClick={handleDeploy}
               disabled={deploying || (!isDirty && isDeployed)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition"
@@ -1032,7 +1034,9 @@ export default function WorkflowEditorPage() {
 
         {/* Canvas area */}
         <div className="flex-1 flex overflow-hidden">
-          <WorkflowLeftSidebar settings={canvasSettings} onSettingsChange={handleSettingsChange} workflowId={id} onApplyTemplate={handleApplyTemplate} description={description} onDescriptionChange={(v) => { setDescription(v); setIsDirty(true); setIsDeployed(false); }} />
+          <div data-onboarding="wf-left-sidebar">
+            <WorkflowLeftSidebar settings={canvasSettings} onSettingsChange={handleSettingsChange} workflowId={id} onApplyTemplate={handleApplyTemplate} description={description} onDescriptionChange={(v) => { setDescription(v); setIsDirty(true); setIsDeployed(false); }} />
+          </div>
           <WorkflowCanvas
             data-onboarding="canvas"
             nodes={nodes.map(n => {
@@ -1152,6 +1156,7 @@ export default function WorkflowEditorPage() {
 
       {/* ── Bottom status bar ─────────────────────────────────────── */}
       <div
+        data-onboarding="wf-bottom-bar"
         className="flex items-center justify-between h-8 px-3 shrink-0"
         style={{ background: 'var(--t-s)', borderTop: '1px solid var(--t-bd)' }}
       >

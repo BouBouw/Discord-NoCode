@@ -21,12 +21,14 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import GuestRoute from '../components/GuestRoute';
 import SettingsPage from '../pages/Dashboard/SettingsPage';
 import PartnerPage from '../pages/Dashboard/PartnerPage';
+import DocumentationPage from '../pages/DocumentationPage';
 
 const router = createBrowserRouter([
   {
     element: <AuthProvider><Outlet /></AuthProvider>,
     children: [
       { path: '/', element: <LandingPage /> },
+      { path: '/documentation', element: <DocumentationPage /> },
       { path: '/auth/discord/callback', element: <GuestRoute><DiscordCallbackPage /></GuestRoute> },
     ],
   },

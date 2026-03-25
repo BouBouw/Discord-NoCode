@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { apiRequest } from '../services/api';
+import { useAuth } from './AuthContext';
 
 // ─── Step definitions ─────────────────────────────────────────────────────────
 
@@ -74,10 +75,34 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     descKey: 'workflowWelcomeDesc',
   },
   {
+    id: 'workflow-header',
+    category: 'workflow',
+    target: '[data-onboarding="wf-header"]',
+    placement: 'bottom',
+    titleKey: 'headerTitle',
+    descKey: 'headerDesc',
+  },
+  {
+    id: 'workflow-left-sidebar',
+    category: 'workflow',
+    target: '[data-onboarding="wf-left-sidebar"]',
+    placement: 'right',
+    titleKey: 'leftSidebarTitle',
+    descKey: 'leftSidebarDesc',
+  },
+  {
+    id: 'workflow-canvas',
+    category: 'workflow',
+    target: '[data-onboarding="canvas"]',
+    placement: 'left',
+    titleKey: 'canvasTitle',
+    descKey: 'canvasDesc',
+  },
+  {
     id: 'workflow-sidebar',
     category: 'workflow',
     target: '[data-onboarding="node-sidebar"]',
-    placement: 'right',
+    placement: 'left',
     titleKey: 'sidebarTitle',
     descKey: 'sidebarDesc',
   },
@@ -85,7 +110,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 'workflow-add-trigger',
     category: 'workflow',
     target: '[data-onboarding="node-sidebar"]',
-    placement: 'right',
+    placement: 'left',
     titleKey: 'addTriggerTitle',
     descKey: 'addTriggerDesc',
     waitForAction: true,
@@ -95,19 +120,11 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 'workflow-add-action',
     category: 'workflow',
     target: '[data-onboarding="node-sidebar"]',
-    placement: 'right',
+    placement: 'left',
     titleKey: 'addActionTitle',
     descKey: 'addActionDesc',
     waitForAction: true,
     actionId: 'node-added',
-  },
-  {
-    id: 'workflow-canvas',
-    category: 'workflow',
-    target: '[data-onboarding="canvas"]',
-    placement: 'left',
-    titleKey: 'canvasTitle',
-    descKey: 'canvasDesc',
   },
   {
     id: 'workflow-connect',
@@ -120,6 +137,14 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     actionId: 'edge-added',
   },
   {
+    id: 'workflow-bottom-bar',
+    category: 'workflow',
+    target: '[data-onboarding="wf-bottom-bar"]',
+    placement: 'top',
+    titleKey: 'bottomBarTitle',
+    descKey: 'bottomBarDesc',
+  },
+  {
     id: 'workflow-save',
     category: 'workflow',
     target: '[data-onboarding="save-btn"]',
@@ -128,6 +153,14 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     descKey: 'saveDesc',
     waitForAction: true,
     actionId: 'workflow-saved',
+  },
+  {
+    id: 'workflow-deploy',
+    category: 'workflow',
+    target: '[data-onboarding="deploy-btn"]',
+    placement: 'bottom',
+    titleKey: 'deployTitle',
+    descKey: 'deployDesc',
   },
   {
     id: 'complete',
@@ -195,42 +228,42 @@ function saveState(state: StoredState) {
 }
 
 export function OnboardingProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [active, setActive] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const initialised = useRef(false);
 
-  // Load state on mount
+  // Re-evaluate onboarding when user changes (login/logout)
   useEffect(() => {
     const stored = loadState();
     setCompleted(stored.completed);
     setCurrentStep(stored.currentStep);
 
-    // Only fetch preferences if the user is authenticated
-    const token = localStorage.getItem('token');
-    if (!token) {
-      initialised.current = true;
+    // No user = not authenticated, nothing to do
+    if (!user) {
+      initialised.current = false;
       return;
     }
 
-    // Also try loading from server
+    // Fetch server-side preferences to decide whether to show onboarding
     apiRequest('/users/preferences').then((prefs: any) => {
       if (prefs?.onboarding?.completed) {
         setCompleted(true);
         saveState({ completed: true, currentStep: ONBOARDING_STEPS.length - 1 });
-      } else if (!stored.completed && !initialised.current) {
+      } else if (!stored.completed) {
         // First time user — auto-start onboarding
         setActive(true);
       }
       initialised.current = true;
     }).catch(() => {
       // If request fails, rely on localStorage
-      if (!stored.completed && !initialised.current) {
+      if (!stored.completed) {
         setActive(true);
       }
       initialised.current = true;
     });
-  }, []);
+  }, [user]);
 
   const persist = useCallback((step: number, done: boolean) => {
     saveState({ completed: done, currentStep: step });
@@ -283,12 +316,24 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
   }, [currentStep, persist]);
 
   const completeAction = useCallback((actionId: string) => {
-    const step = ONBOARDING_STEPS[currentStep];
-    if (step?.waitForAction && step.actionId === actionId && active) {
-      // Auto-advance after a short delay for visual feedback
-      setTimeout(() => next(), 600);
-    }
-  }, [currentStep, active, next]);
+    setCurrentStep(cur => {
+      const step = ONBOARDING_STEPS[cur];
+      if (step?.waitForAction && step.actionId === actionId) {
+        const nextIdx = cur + 1;
+        if (nextIdx >= ONBOARDING_STEPS.length) {
+          setCompleted(true);
+          setActive(false);
+          persist(nextIdx, true);
+          return cur;
+        }
+        setTimeout(() => {
+          persist(nextIdx, false);
+        }, 0);
+        return nextIdx;
+      }
+      return cur;
+    });
+  }, [persist]);
 
   const jumpToCategory = useCallback((category: OnboardingCategory) => {
     if (completed || !active) return;

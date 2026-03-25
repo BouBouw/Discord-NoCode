@@ -292,6 +292,14 @@ const fr: TranslationKeys = {
     memberSince: 'Membre depuis',
     discordLinked: 'Discord lié',
     discordNotLinked: 'Discord non lié',
+    linkDiscord: 'Lier Discord',
+    linkDiscordDesc: 'Liez votre compte Discord (doit utiliser le même e-mail)',
+    unlinkDiscord: 'Délier le compte Discord',
+    discordLinkSuccess: 'Compte Discord lié avec succès !',
+    discordUnlinkSuccess: 'Compte Discord délié avec succès.',
+    discordLinkFailed: 'Échec de la liaison du compte Discord. Veuillez réessayer.',
+    discordEmailMismatch: 'L\'e-mail du compte Discord ne correspond pas à votre e-mail enregistré.',
+    discordAlreadyLinked: 'Ce compte Discord est déjà lié à un autre utilisateur.',
     planFree: 'Plan Free',
     editProfile: 'Modifier le profil',
     instanceDefaults: 'Paramètres des nouvelles instances',
@@ -1834,23 +1842,1387 @@ const fr: TranslationKeys = {
     // Étapes — Workflow
     workflowWelcomeTitle: 'Éditeur de Workflow',
     workflowWelcomeDesc: 'C\'est ici que la magie opère ! Concevez le comportement de votre bot visuellement en connectant des nœuds ensemble — comme des blocs de construction.',
+    headerTitle: 'La Barre d\'Outils',
+    headerDesc: 'Ici vous pouvez renommer votre workflow, voir le statut du bot associé, importer/exporter votre projet et accéder aux raccourcis clavier.',
+    leftSidebarTitle: 'Barre Latérale Gauche',
+    leftSidebarDesc: 'Accédez à vos bases de données, membres d\'équipe, paramètres du canevas, modèles prêts à l\'emploi et à la section d\'aide — tout depuis ce panneau.',
+    canvasTitle: 'Le Canevas',
+    canvasDesc: 'C\'est votre espace de travail visuel. Déplacez les nœuds pour les repositionner, double-cliquez pour les configurer, et zoomez avec la molette de votre souris.',
     sidebarTitle: 'Bibliothèque de Nœuds',
     sidebarDesc: 'Cette barre latérale contient tous les blocs de construction pour votre bot : déclencheurs, actions, logique, et plus. Parcourez les catégories ou recherchez un nœud spécifique.',
     addTriggerTitle: 'Ajoutez un Déclencheur',
     addTriggerDesc: 'Glissez un « Gestionnaire de Commande » ou « Gestionnaire d\'Événement » depuis la barre latérale vers le canevas. Les déclencheurs définissent quand votre bot répond.',
     addActionTitle: 'Ajoutez une Action',
     addActionDesc: 'Maintenant, glissez un nœud d\'action comme « Envoyer un Message » sur le canevas. Les actions définissent ce que votre bot fait lorsqu\'il est déclenché.',
-    canvasTitle: 'Le Canevas',
-    canvasDesc: 'C\'est votre espace de travail visuel. Déplacez les nœuds pour les repositionner, double-cliquez pour les configurer, et zoomez avec la molette de votre souris.',
     connectTitle: 'Connectez les Nœuds',
     connectDesc: 'Glissez depuis la poignée de sortie d\'un nœud (côté droit) vers la poignée d\'entrée d\'un autre nœud (côté gauche) pour créer une connexion. Cela définit le flux.',
+    bottomBarTitle: 'Panneau Inférieur',
+    bottomBarDesc: 'Activez le Chat IA pour obtenir de l\'aide dans la construction de votre workflow, ou ouvrez la Console pour voir les logs d\'exécution en temps réel quand votre bot tourne.',
     saveTitle: 'Sauvegardez Votre Travail',
     saveDesc: 'Cliquez sur le bouton Sauvegarder pour enregistrer votre workflow. Une fois sauvegardé, vous pouvez le déployer pour activer votre bot !',
+    deployTitle: 'Déployez Votre Bot',
+    deployDesc: 'Cliquez sur Déployer pour envoyer votre workflow vers votre bot. Il sera reconstruit et redémarré automatiquement avec vos dernières modifications.',
     completeTitle: 'Vous Êtes Prêt ! 🎉',
     completeDesc: 'Vous connaissez maintenant les bases de DisFlow. Créez des déclencheurs, ajoutez des actions, connectez-les et déployez votre bot. Bonne construction !',
 
     // Paramètres
     restartTour: 'Relancer le tour',
+  },
+
+  // ── Documentation ───────────────────────────────────────────────────────────
+  docs: {
+    docsLabel: 'Docs',
+    homeLabel: 'Documentation',
+    homeTitle: 'Documentation DisFlow',
+    homeSubtitle: 'Tout ce dont vous avez besoin pour créer des bots Discord puissants — sans coder.',
+    searchPlaceholder: 'Rechercher dans la documentation...',
+    articlesLabel: 'articles',
+
+    // ── Premiers pas ──
+    gettingStartedTitle: 'Premiers Pas',
+    gettingStartedDesc: 'Nouveau sur DisFlow ? Apprenez les bases et créez votre premier bot en quelques minutes.',
+    whatIsDisflowTitle: 'Qu\'est-ce que DisFlow ?',
+    whatIsDisflowBody: `DisFlow est une **plateforme visuelle no-code** qui vous permet de créer des bots Discord en connectant des nœuds sur un canevas — aucune compétence en programmation requise.
+
+## Comment ça marche
+
+- **Glissez-déposez** des nœuds de déclenchement et d\'action sur le canevas
+- **Connectez-les** ensemble pour définir le comportement de votre bot
+- **Configurez** chaque nœud via un panneau latéral simple
+- **Déployez** en un clic et votre bot est en ligne instantanément
+
+:::tip
+DisFlow gère toutes les interactions complexes avec l\'API Discord en coulisses. Concentrez-vous simplement sur *ce que* votre bot doit faire, pas *comment* il le fait.
+:::
+
+## Pour qui ?
+
+- Les gestionnaires de communauté qui veulent des bots personnalisés sans embaucher un développeur
+- Les propriétaires de serveurs cherchant des outils de modération, des messages de bienvenue ou des mini-jeux
+- Les développeurs qui veulent prototyper rapidement des idées de bots
+- Toute personne qui préfère une approche visuelle de la création de bots`,
+
+    createAccountTitle: 'Créer un Compte',
+    createAccountBody: `## Options d\'inscription
+
+Vous pouvez vous inscrire via :
+
+- **E-mail et mot de passe** — remplissez le formulaire sur la page d\'inscription
+- **Discord OAuth** — cliquez sur « Se connecter avec Discord » pour vous connecter instantanément
+
+:::info
+L\'utilisation de Discord OAuth lie votre identité Discord à DisFlow, facilitant la gestion des tokens et des permissions par la suite.
+:::
+
+## Configurer votre profil
+
+Après l\'inscription, rendez-vous dans **Tableau de bord → Paramètres** pour :
+
+- Choisir votre langue préférée (32+ langues disponibles)
+- Sélectionner votre thème (clair ou sombre)
+- Configurer les préférences de notification`,
+
+    firstBotTitle: 'Créer Votre Premier Bot',
+    firstBotBody: `## Étape par étape
+
+1. Allez sur le **Tableau de bord**
+2. Cliquez sur le bouton **« + Nouveau Bot »**
+3. Entrez le **nom** et le **token Discord** de votre bot
+4. Cliquez sur **Créer** — votre instance de bot est prête !
+
+## Étapes suivantes
+
+Une fois votre bot créé, cliquez dessus pour ouvrir l\'**Éditeur de Workflow**. De là :
+
+- Ajoutez un **Gestionnaire de Commande** (ex. /ping)
+- Connectez-le à une action **Envoyer un Message**
+- Cliquez sur **Sauvegarder** puis **Déployer**
+
+:::tip
+Commencez simple ! Une commande /ping est le workflow parfait pour tester que tout fonctionne correctement.
+:::
+
+## Statut du bot
+
+Votre bot affichera l\'un de ces statuts sur le tableau de bord :
+
+- **En ligne** — le bot fonctionne et est connecté à Discord
+- **Hors ligne** — le bot est arrêté
+- **Erreur** — quelque chose s\'est mal passé, vérifiez les logs de la console`,
+
+    discordTokenTitle: 'Obtenir un Token Discord',
+    discordTokenBody: `## Créer une application Discord
+
+1. Allez sur le **Portail Développeur Discord** (https://discord.com/developers/applications)
+2. Cliquez sur **« Nouvelle Application »** et donnez-lui un nom
+3. Naviguez vers l\'onglet **Bot** à gauche
+4. Cliquez sur **« Ajouter un Bot »** et confirmez
+
+## Copier le token
+
+1. Sous l\'onglet Bot, cliquez sur **« Réinitialiser le Token »**
+2. Copiez le token qui apparaît
+
+:::warning
+Ne partagez jamais votre token de bot publiquement ! Toute personne possédant le token peut contrôler votre bot. En cas de fuite, réinitialisez-le immédiatement depuis le Portail Développeur.
+:::
+
+## Inviter le bot sur votre serveur
+
+1. Allez dans l\'onglet **OAuth2 → URL Generator**
+2. Sélectionnez les scopes : **bot** et **applications.commands**
+3. Sélectionnez les permissions nécessaires
+4. Copiez l\'URL générée et ouvrez-la dans votre navigateur
+5. Choisissez votre serveur et cliquez sur **Autoriser**
+
+## Intents requis
+
+Sous l\'onglet Bot, activez ces intents privilégiés si votre bot en a besoin :
+
+- **Presence Intent** — pour suivre le statut en ligne/hors ligne
+- **Server Members Intent** — pour réagir aux arrivées/départs de membres
+- **Message Content Intent** — pour lire le contenu des messages`,
+
+    // ── Tableau de bord ──
+    dashboardTitle: 'Tableau de Bord',
+    dashboardDesc: 'Naviguez entre vos bots, statistiques et paramètres depuis le tableau de bord principal.',
+    dashOverviewTitle: 'Vue d\'ensemble',
+    dashOverviewBody: `Le tableau de bord est votre **centre de commande** pour gérer tous vos bots DisFlow.
+
+## Disposition
+
+- **Barre de stats** en haut — total de bots, bots en ligne, workflows, déploiements
+- **Cartes de bots** — chaque carte montre le nom, le statut et les actions rapides
+- **Barre latérale** — naviguez entre Tableau de bord, Bases de données, Membres et Paramètres
+
+## Actions rapides
+
+Depuis chaque carte de bot, vous pouvez :
+
+- **Ouvrir** l\'Éditeur de Workflow
+- **Démarrer / Arrêter** le bot
+- **Supprimer** l\'instance du bot
+- Voir les **logs** et l\'activité récente`,
+
+    dashStatsTitle: 'Statistiques & Widgets',
+    dashStatsBody: `## Widgets du tableau de bord
+
+Le tableau de bord affiche des widgets de vue d\'ensemble en temps réel :
+
+- **Total Bots** — nombre d\'instances de bots créées
+- **Bots en ligne** — combien sont actuellement en cours d\'exécution
+- **Workflows** — nombre total de workflows sauvegardés
+- **Déploiements** — nombre de déploiements aujourd\'hui
+
+:::tip
+Les widgets se mettent à jour en temps réel. Gardez le tableau de bord ouvert pour surveiller la santé de vos bots d\'un coup d\'œil.
+:::`,
+
+    dashInstancesTitle: 'Gérer les Instances',
+    dashInstancesBody: `## Page d\'instance
+
+Cliquez sur une carte de bot pour ouvrir sa page d\'instance dédiée où vous pouvez :
+
+- Voir le **statut** détaillé et le **temps de fonctionnement**
+- Voir et gérer les **workflows** attachés
+- Accéder aux **logs** et à la **console**
+- Mettre à jour le **token** ou les **paramètres**
+
+## Démarrage et arrêt
+
+- Cliquez sur **Démarrer** pour lancer le bot et le connecter à Discord
+- Cliquez sur **Arrêter** pour l\'éteindre proprement
+- Utilisez **Redémarrer** pour appliquer les changements après modification du token
+
+:::info
+Arrêter un bot ne supprime aucun workflow ni donnée. Vous pouvez le redémarrer à tout moment.
+:::`,
+
+    dashSettingsTitle: 'Paramètres du Compte',
+    dashSettingsBody: `## Personnalisation
+
+Dans **Tableau de bord → Paramètres**, vous pouvez configurer :
+
+- **Langue** — choisissez parmi 32+ langues
+- **Thème** — mode sombre ou clair
+- **Couleur d\'accent** — personnalisez l\'interface
+- **Notifications** — notifications par e-mail et navigateur
+
+## Sécurité
+
+- Changer votre **mot de passe**
+- Activer l\'**authentification à deux facteurs** (si disponible)
+- Voir les **sessions** actives
+- **Supprimer le compte** — supprime toutes les données définitivement`,
+
+    // ── Canevas ──
+    canvasTitle: 'Canevas & Éditeur',
+    canvasDesc: 'Maîtrisez l\'éditeur de workflow visuel — nœuds, connexions et raccourcis.',
+    canvasBasicsTitle: 'Bases du Canevas',
+    canvasBasicsBody: `Le canevas est l\'espace de travail principal où vous construisez la logique de votre bot visuellement.
+
+## Navigation
+
+- **Panoramique** — cliquez et glissez sur le canevas vide
+- **Zoom** — molette de la souris ou pincement sur le trackpad
+- **Ajuster la vue** — double-cliquez sur le canevas vide ou utilisez la minimap
+
+## Éléments
+
+- **Nœuds** — blocs colorés représentant des déclencheurs, actions ou logique
+- **Arêtes** — lignes connectant les nœuds pour définir le flux d\'exécution
+- **Poignées** — petits points sur les bords des nœuds où les connexions s\'attachent
+
+:::tip
+Utilisez la minimap (coin inférieur droit) pour naviguer rapidement dans les grands workflows.
+:::`,
+
+    addNodesTitle: 'Ajouter des Nœuds',
+    addNodesBody: `## Méthodes
+
+Il y a deux façons d\'ajouter des nœuds :
+
+1. **Barre latérale gauche** → Parcourir les catégories → Cliquer ou glisser un nœud sur le canevas
+2. **Clic droit** sur le canevas → Menu d\'ajout rapide
+
+## Catégories de nœuds
+
+- **Gestionnaires** (déclencheurs) — ce qui démarre le flux (commandes, événements, boutons…)
+- **Actions** — ce que le bot fait (envoyer un message, gérer les rôles…)
+- **Logique** — conditions, boucles, variables
+- **Base de données** — requêtes SQL, gestion des tables
+
+:::tip
+Utilisez la barre de recherche dans la barre latérale pour trouver rapidement un type de nœud spécifique.
+:::`,
+
+    connectNodesTitle: 'Connecter les Nœuds',
+    connectNodesBody: `## Comment connecter
+
+1. Survolez la **poignée de sortie** d\'un nœud (côté droit) — elle se met en surbrillance
+2. **Cliquez et glissez** depuis la poignée de sortie
+3. Déposez sur la **poignée d\'entrée** d\'un autre nœud (côté gauche)
+
+Une ligne colorée (arête) apparaît entre eux, représentant la direction du flux.
+
+## Règles
+
+- Un nœud déclencheur peut se connecter à plusieurs actions (exécution parallèle)
+- Une action ne peut avoir qu\'**une seule connexion entrante**
+- Vous ne pouvez pas créer de **boucles circulaires** (A → B → A)
+- Les nœuds logiques (conditions) ont **plusieurs sorties** (chemins vrai/faux)
+
+:::warning
+Les nœuds déconnectés ne s\'exécuteront pas quand le bot tourne. Assurez-vous que chaque action est connectée à une chaîne de déclencheurs.
+:::`,
+
+    configureNodesTitle: 'Configurer les Nœuds',
+    configureNodesBody: `## Ouvrir le panneau de configuration
+
+Cliquez sur n\'importe quel nœud pour ouvrir sa **barre latérale de configuration** à droite. Chaque type de nœud a des paramètres spécifiques.
+
+## Champs communs
+
+- **Label** — un nom personnalisé pour identifier le nœud sur le canevas
+- **Canal** — quel canal Discord cibler
+- **Contenu** — le message texte à envoyer
+
+## Variables
+
+Utilisez des valeurs dynamiques avec la syntaxe **\`{variable}\`** :
+
+- \`{user.name}\` — le nom de l\'utilisateur déclencheur
+- \`{user.id}\` — son identifiant Discord
+- \`{channel.name}\` — le canal où l\'événement s\'est produit
+- \`{args}\` — les arguments de la commande
+
+:::tip
+Cliquez sur l\'icône de variable dans n\'importe quel champ texte pour parcourir les variables disponibles.
+:::`,
+
+    shortcutsTitle: 'Raccourcis Clavier',
+    shortcutsBody: `## Raccourcis du canevas
+
+- **Ctrl + S** — Sauvegarder le workflow
+- **Ctrl + Z** — Annuler
+- **Ctrl + Shift + Z** — Rétablir
+- **Suppr / Retour arrière** — Supprimer le nœud ou l\'arête sélectionné(e)
+- **Ctrl + A** — Tout sélectionner
+- **Ctrl + C / V** — Copier / Coller des nœuds
+- **Échap** — Tout désélectionner
+
+## Navigation
+
+- **Espace + Glisser** — Panoramique du canevas
+- **Molette** — Zoom avant/arrière
+- **Ctrl + Shift + F** — Ajuster tous les nœuds dans la vue
+
+:::tip
+Maintenez **Shift** en cliquant pour sélectionner plusieurs nœuds.
+:::`,
+
+    importExportTitle: 'Import & Export',
+    importExportBody: `## Exporter un workflow
+
+1. Ouvrez le workflow dans l\'éditeur
+2. Cliquez sur le bouton **menu** (barre supérieure) → **Exporter**
+3. Le workflow est enregistré en fichier JSON
+
+## Importer un workflow
+
+1. Dans l\'éditeur, cliquez sur **menu** → **Importer**
+2. Sélectionnez un fichier JSON précédemment exporté
+3. Les nœuds et arêtes sont chargés sur le canevas
+
+:::info
+Les workflows exportés peuvent être partagés avec d\'autres utilisateurs DisFlow. Ils n\'ont qu\'à importer le fichier JSON dans leur propre éditeur.
+:::`,
+
+    // ── Gestionnaires ──
+    handlersTitle: 'Gestionnaires & Déclencheurs',
+    handlersDesc: 'Configurez les événements et commandes qui démarrent vos workflows.',
+    commandHandlerTitle: 'Gestionnaire de Commande',
+    commandHandlerBody: `Le Gestionnaire de Commande déclenche votre workflow quand un utilisateur tape une **commande slash**.
+
+## Configuration
+
+- **Nom de la commande** — le nom après le slash (ex. \`/ping\`)
+- **Description** — affichée dans le menu de commandes Discord
+- **Options** — ajouter des paramètres (texte, nombre, utilisateur, canal, rôle, booléen)
+
+## Exemple
+
+Une simple commande **/ping** :
+
+1. Ajoutez un nœud **Gestionnaire de Commande** → définissez le nom à \`ping\`
+2. Connectez-le à un nœud **Envoyer un Message** → définissez le contenu à \`Pong ! 🏓\`
+3. Déployez
+
+:::tip
+Discord met en cache les commandes slash. Après le premier déploiement, la commande peut mettre jusqu\'à une heure pour apparaître. Les mises à jour suivantes sont plus rapides.
+:::
+
+## Variables disponibles
+
+- \`{user}\` — l\'utilisateur qui a lancé la commande
+- \`{channel}\` — où la commande a été utilisée
+- \`{guild}\` — le serveur
+- \`{args.nomOption}\` — valeur des options de commande`,
+
+    eventHandlerTitle: 'Gestionnaire d\'Événement',
+    eventHandlerBody: `Le Gestionnaire d\'Événement se déclenche quand un **événement Discord** se produit — aucune commande utilisateur nécessaire.
+
+## Événements disponibles
+
+- **messageCreate** — un message est envoyé dans un canal
+- **guildMemberAdd** — quelqu\'un rejoint le serveur
+- **guildMemberRemove** — quelqu\'un quitte ou est retiré
+- **messageReactionAdd** — une réaction est ajoutée
+- **voiceStateUpdate** — quelqu\'un rejoint/quitte un canal vocal
+- **interactionCreate** — un bouton, menu ou modal est soumis
+- Et bien d\'autres…
+
+## Configuration
+
+1. Glissez un **Gestionnaire d\'Événement** sur le canevas
+2. Sélectionnez le type d\'événement dans le menu déroulant
+3. (Optionnel) Ajoutez des filtres — ex. ne déclencher que dans certains canaux
+
+:::info
+Certains événements nécessitent l\'activation des **intents privilégiés** dans le Portail Développeur Discord. Consultez le guide « Obtenir un Token Discord » pour les détails.
+:::`,
+
+    buttonHandlerTitle: 'Gestionnaire de Bouton',
+    buttonHandlerBody: `Le Gestionnaire de Bouton se déclenche quand un utilisateur **clique sur un bouton** que votre bot a précédemment envoyé.
+
+## Comment ça marche
+
+1. D\'abord, envoyez un message avec des boutons via l\'action **Envoyer un Message** + **Ajouter un Bouton**
+2. Assignez à chaque bouton un **Identifiant personnalisé** unique
+3. Ajoutez un nœud **Gestionnaire de Bouton** et définissez le même identifiant
+
+Quand un utilisateur clique sur ce bouton, le gestionnaire se déclenche et exécute les actions connectées.
+
+## Configuration
+
+- **Identifiant personnalisé** — doit correspondre exactement à l\'ID du bouton
+- **Réponse éphémère** — option pour répondre uniquement au cliquer
+
+:::tip
+Utilisez des identifiants descriptifs comme \`verify-role\` ou \`ticket-open\` pour garder votre workflow lisible.
+:::`,
+
+    selectMenuHandlerTitle: 'Gestionnaire de Menu Déroulant',
+    selectMenuHandlerBody: `Se déclenche quand un utilisateur **choisit une option** dans un menu déroulant.
+
+## Configuration
+
+1. Envoyez un message avec un menu déroulant via l\'action **Ajouter un Menu Déroulant**
+2. Définissez des options avec des valeurs uniques
+3. Ajoutez un **Gestionnaire de Menu Déroulant** avec l\'identifiant correspondant
+
+## Variables disponibles
+
+- \`{values}\` — la ou les valeur(s) sélectionnée(s)
+- \`{user}\` — qui a fait la sélection
+
+:::info
+Les menus déroulants peuvent être configurés en **sélection unique** ou **sélection multiple**. En sélection multiple, \`{values}\` contiendra toutes les options choisies.
+:::`,
+
+    modalHandlerTitle: 'Gestionnaire de Modal',
+    modalHandlerBody: `Se déclenche quand un utilisateur **soumet un modal** (formulaire popup).
+
+## Créer un flux de modal
+
+1. D\'abord, affichez le modal avec une action **Ouvrir un Modal** (généralement depuis un bouton ou une commande)
+2. Définissez les champs du modal (entrées de texte)
+3. Ajoutez un **Gestionnaire de Modal** avec l\'identifiant correspondant
+
+## Configuration
+
+- **Identifiant personnalisé** — doit correspondre à l\'ID du modal
+- Les champs sont accessibles via \`{fields.fieldId}\`
+
+## Exemple : Système de tickets
+
+1. L\'utilisateur clique sur un bouton « Créer un Ticket »
+2. Un modal s\'ouvre demandant le sujet et la description
+3. Le Gestionnaire de Modal reçoit la soumission
+4. Les actions connectées créent un canal et postent les informations du ticket
+
+:::tip
+Les modaux peuvent avoir jusqu\'à **5 entrées de texte** — utilisez le style court ou paragraphe.
+:::`,
+
+    // ── Actions ──
+    actionsTitle: 'Actions Discord',
+    actionsDesc: 'Envoyez des messages, gérez les rôles, modérez — tout ce que votre bot peut faire.',
+    sendMessageTitle: 'Envoyer un Message',
+    sendMessageBody: `L\'action la plus courante — envoie un message texte dans un canal Discord.
+
+## Configuration
+
+- **Canal** — sélectionnez un canal spécifique ou utilisez \`{channel}\` pour le canal courant
+- **Contenu** — le texte à envoyer (supporte les variables et le markdown Discord)
+- **Répondre** — basculez pour répondre au message déclencheur
+
+## Markdown Discord
+
+- **Gras** : \`**texte**\`
+- *Italique* : \`*texte*\`
+- __Souligné__ : \`__texte__\`
+- ~~Barré~~ : \`~~texte~~\`
+- Code : \`\\\`code\\\`\`
+- Bloc de code : \`\\\`\\\`\\\`lang\\ncode\\\`\\\`\\\`\`
+
+:::tip
+Combinez l\'action Envoyer un Message avec un nœud **Embed** pour des messages enrichis avec couleurs, images et champs.
+:::`,
+
+    editDeleteTitle: 'Modifier & Supprimer des Messages',
+    editDeleteBody: `## Modifier un message
+
+Utilisez l\'action **Modifier un Message** pour changer un message précédemment envoyé :
+
+- **ID du message** — l\'ID du message à modifier (utilisez \`{message.id}\` d\'un envoi précédent)
+- **Nouveau contenu** — le texte mis à jour
+
+## Supprimer un message
+
+L\'action **Supprimer un Message** retire un message :
+
+- **ID du message** — l\'ID à supprimer
+- **Canal** — où se trouve le message
+
+:::warning
+Le bot ne peut modifier ou supprimer que les messages qu\'il a envoyés, ou les messages dans des canaux où il a la permission **Gérer les Messages**.
+:::`,
+
+    embedsTitle: 'Embeds',
+    embedsBody: `Les embeds sont des **cartes de message enrichies** avec couleurs, titres, images et champs structurés.
+
+## Champs d\'un embed
+
+- **Titre** — texte d\'en-tête en gras
+- **Description** — texte principal (supporte le markdown)
+- **Couleur** — couleur de bordure (hex ou prédéfinie)
+- **Miniature** — petite image (en haut à droite)
+- **Image** — grande image en bas
+- **Pied de page** — petit texte en bas
+- **Auteur** — nom et icône en haut
+- **Champs** — paires clé-valeur (en ligne ou empilées)
+
+## Ajouter des champs
+
+Cliquez sur **« + Ajouter un Champ »** pour ajouter des données structurées :
+
+- **Nom** — titre du champ
+- **Valeur** — contenu du champ
+- **En ligne** — afficher côte à côte avec d\'autres champs en ligne
+
+:::tip
+Vous pouvez envoyer jusqu\'à **10 embeds** dans un seul message. Utilisez plusieurs nœuds embed connectés à un seul Envoyer un Message.
+:::`,
+
+    reactionsPinsTitle: 'Réactions & Épingles',
+    reactionsPinsBody: `## Ajouter des réactions
+
+L\'action **Ajouter une Réaction** ajoute un émoji en réaction à un message :
+
+- **ID du message** — message cible
+- **Émoji** — émoji Unicode ou ID d\'émoji personnalisé
+
+## Épingler des messages
+
+L\'action **Épingler un Message** épingle un message au canal :
+
+- **ID du message** — le message à épingler
+
+:::info
+Discord limite les messages épinglés à **50 par canal**. Le bot a besoin de la permission **Gérer les Messages** pour épingler et ajouter des réactions.
+:::`,
+
+    threadsTitle: 'Threads',
+    threadsBody: `## Créer des threads
+
+L\'action **Créer un Thread** crée un nouveau fil de discussion :
+
+- **Nom** — le titre du thread
+- **Canal** — canal parent
+- **Auto-archivage** — durée avant l\'archivage automatique (1h, 24h, 3j, 7j)
+- **Message** — créer optionnellement à partir d\'un message existant
+
+## Envoyer dans des threads
+
+Utilisez l\'action **Envoyer un Message** avec l\'ID du canal du thread pour poster dans un thread.
+
+:::tip
+Les threads sont parfaits pour organiser les discussions — utilisez-les pour les systèmes de tickets, les retours ou les conversations thématiques.
+:::`,
+
+    dmTitle: 'Messages Privés',
+    dmBody: `## Envoyer un MP
+
+L\'action **Envoyer un MP** envoie un message privé à un utilisateur :
+
+- **Utilisateur** — l\'utilisateur cible (utilisez \`{user}\` ou un ID spécifique)
+- **Contenu** — le texte du message
+- **Embed** — embed enrichi optionnel
+
+:::warning
+Certains utilisateurs ont les MPs désactivés. Votre workflow devrait gérer le cas où le MP échoue. Envisagez d\'ajouter un nœud condition pour vérifier les erreurs.
+:::
+
+:::tip
+Cas courants de MP : messages de bienvenue à l\'arrivée, notifications de modération (raisons de kick/ban), codes de vérification.
+:::`,
+
+    // ── Interactions ──
+    interactionsTitle: 'Interactions',
+    interactionsDesc: 'Boutons, menus déroulants et modaux — rendez votre bot interactif.',
+    buttonsTitle: 'Boutons',
+    buttonsBody: `## Ajouter des boutons aux messages
+
+Utilisez le composant **Ajouter un Bouton** dans une action Envoyer un Message :
+
+- **Style** — Primaire (bleu), Secondaire (gris), Succès (vert), Danger (rouge), Lien (URL)
+- **Label** — le texte du bouton
+- **Identifiant personnalisé** — identifiant unique (pas nécessaire pour les boutons Lien)
+- **Émoji** — émoji optionnel avant le label
+- **Désactivé** — basculez pour rendre le bouton non-cliquable
+
+## Lignes de boutons
+
+- Jusqu\'à **5 boutons** par ligne
+- Jusqu\'à **5 lignes** par message (25 boutons max)
+
+## Gérer les clics
+
+Connectez un **Gestionnaire de Bouton** avec l\'identifiant correspondant pour répondre quand les utilisateurs cliquent.
+
+:::tip
+Utilisez le style *Danger* pour les actions destructives (supprimer, bannir) afin de donner un avertissement visuel aux utilisateurs.
+:::`,
+
+    selectMenusTitle: 'Menus Déroulants',
+    selectMenusBody: `## Types de menus déroulants
+
+- **Menu à chaînes** — options personnalisées que vous définissez
+- **Menu d\'utilisateurs** — permet de choisir des membres du serveur
+- **Menu de rôles** — permet de choisir des rôles
+- **Menu de canaux** — permet de choisir des canaux
+- **Menu mentionnable** — utilisateurs ou rôles
+
+## Configuration (Menu à chaînes)
+
+- **Identifiant personnalisé** — identifiant unique
+- **Texte indicatif** — texte grisé avant la sélection
+- **Options** — label, valeur, description et émoji optionnel pour chacune
+- **Min/Max valeurs** — combien d\'options peuvent être sélectionnées
+
+:::tip
+Les menus déroulants sont idéaux pour les panneaux de paramètres, les sélecteurs de rôles ou toute situation où les utilisateurs doivent choisir dans une liste.
+:::`,
+
+    modalsTitle: 'Modaux (Formulaires Popup)',
+    modalsBody: `## Que sont les modaux ?
+
+Les modaux sont des **formulaires popup** qui apparaissent par-dessus Discord. Ils ne peuvent être déclenchés que par un clic sur un bouton ou une interaction de commande slash.
+
+## Configuration
+
+- **Identifiant personnalisé** — identifiant unique
+- **Titre** — affiché en haut du popup
+- **Champs** — jusqu\'à 5 champs de saisie de texte
+
+## Types d\'entrée texte
+
+- **Court** — saisie sur une seule ligne
+- **Paragraphe** — saisie multiligne
+
+Chaque champ a :
+
+- **Identifiant personnalisé** — pour récupérer la valeur
+- **Label** — affiché au-dessus du champ
+- **Texte indicatif** — texte d\'aide
+- **Requis** — si l\'utilisateur doit le remplir
+- **Min/Max longueur** — limites de caractères
+
+:::tip
+Les modaux sont parfaits pour les formulaires de retour, la création de tickets, les candidatures et les rapports de bugs.
+:::`,
+
+    // ── Modération ──
+    moderationTitle: 'Modération',
+    moderationDesc: 'Gardez votre serveur en sécurité — kicks, bans, timeouts et vérifications de permissions.',
+    kickBanTitle: 'Kick & Ban',
+    kickBanBody: `## Kick
+
+L\'action **Expulser un Membre** retire un utilisateur du serveur (il peut revenir avec une invitation) :
+
+- **Utilisateur** — qui expulser
+- **Raison** — enregistrée dans le journal d\'audit Discord
+
+## Ban
+
+L\'action **Bannir un Membre** retire et bloque définitivement un utilisateur :
+
+- **Utilisateur** — qui bannir
+- **Raison** — raison dans le journal d\'audit
+- **Supprimer les messages** — retirer leurs messages des 0-7 derniers jours
+
+:::warning
+Le rôle du bot doit être **plus haut** dans la hiérarchie des rôles que le rôle le plus élevé de l\'utilisateur cible. Le bot a aussi besoin des permissions **Expulser des Membres** et/ou **Bannir des Membres**.
+:::
+
+:::tip
+Combinez avec un nœud **Condition** pour vérifier les rôles avant d\'expulser — ex. ne pas expulser les utilisateurs avec le rôle « Modérateur ».
+:::`,
+
+    timeoutMuteTitle: 'Timeout & Mute',
+    timeoutMuteBody: `## Timeout
+
+L\'action **Timeout un Membre** empêche temporairement un utilisateur d\'envoyer des messages ou de rejoindre un vocal :
+
+- **Utilisateur** — membre cible
+- **Durée** — combien de temps (1 minute à 28 jours)
+- **Raison** — raison dans le journal d\'audit
+
+## Retirer un timeout
+
+Utilisez l\'action **Retirer le Timeout** ou définissez la durée à \`0\`.
+
+:::info
+Les timeouts sont la fonctionnalité de mute intégrée à Discord. Ils sont préférables au mute par rôle car ils :
+- Affichent un compte à rebours à l\'utilisateur
+- Expirent automatiquement
+- Ne nécessitent pas de configuration d\'un rôle « Muet »
+:::`,
+
+    bulkDeleteTitle: 'Suppression en Masse',
+    bulkDeleteBody: `L\'action **Suppression en Masse** supprime plusieurs messages à la fois :
+
+- **Canal** — quel canal purger
+- **Nombre** — nombre de messages à supprimer (2-100)
+- **Filtre** — filtrer optionnellement par utilisateur ou contenu
+
+## Limitations
+
+- Impossible de supprimer des messages de **plus de 14 jours** (restriction de l\'API Discord)
+- Maximum **100 messages** par action
+- Nécessite la permission **Gérer les Messages**
+
+:::tip
+Combinez avec un **Gestionnaire de Commande** pour créer une commande /purge. Ajoutez une vérification de permission pour vous assurer que seuls les modérateurs peuvent l\'utiliser.
+:::`,
+
+    permissionsTitle: 'Vérification des Permissions',
+    permissionsBody: `## Vérifier les permissions
+
+Utilisez un nœud **Condition** pour vérifier les permissions avant d\'exécuter une action :
+
+- **A le rôle** — vérifier si l\'utilisateur a un rôle spécifique
+- **A la permission** — vérifier les permissions Discord (Gérer les Messages, Expulser, Bannir, etc.)
+- **Est propriétaire** — vérifier si l\'utilisateur est le propriétaire du serveur
+
+## Hiérarchie des permissions
+
+Les permissions Discord suivent une hiérarchie :
+
+1. Propriétaire du serveur (toutes les permissions)
+2. Rôle Administrateur (toutes les permissions)
+3. Permissions basées sur les rôles (le rôle le plus élevé l\'emporte)
+4. Surcharges spécifiques au canal
+
+:::warning
+Ajoutez toujours des vérifications de permissions aux commandes de modération. Sans elles, n\'importe quel utilisateur pourrait utiliser vos workflows de kick/ban !
+:::
+
+:::tip
+Créez une vérification « modérateur » réutilisable en combinant plusieurs conditions — ex. a le rôle Modérateur OU a la permission Gérer les Messages.
+:::`,
+
+    // ── Serveur ──
+    guildTitle: 'Rôles & Serveur',
+    guildDesc: 'Gérez les rôles, canaux, émojis et paramètres du serveur.',
+    rolesTitle: 'Gestion des Rôles',
+    rolesBody: `## Ajouter des rôles
+
+L\'action **Ajouter un Rôle** donne un rôle à un membre :
+
+- **Utilisateur** — membre cible
+- **Rôle** — quel rôle ajouter
+
+## Retirer des rôles
+
+L\'action **Retirer un Rôle** enlève un rôle :
+
+- **Utilisateur** — membre cible
+- **Rôle** — quel rôle retirer
+
+## Créer des rôles
+
+L\'action **Créer un Rôle** crée un nouveau rôle :
+
+- **Nom** — nom du rôle
+- **Couleur** — code couleur hex
+- **Permissions** — quelles permissions accorder
+- **Hoist** — afficher séparément dans la liste des membres
+- **Mentionnable** — permettre à tous de mentionner ce rôle
+
+:::warning
+Le rôle le plus élevé du bot doit être **au-dessus** du rôle cible dans la hiérarchie des rôles du serveur.
+:::
+
+:::tip
+Utilisez les rôles avec l\'événement **guildMemberAdd** pour créer des workflows d\'auto-rôle — donner un rôle aux nouveaux membres à leur arrivée.
+:::`,
+
+    channelsTitle: 'Gestion des Canaux',
+    channelsBody: `## Créer des canaux
+
+L\'action **Créer un Canal** :
+
+- **Nom** — nom du canal
+- **Type** — texte, vocal, catégorie, annonce, stage, forum
+- **Catégorie** — catégorie parente
+- **Sujet** — description du canal (canaux texte)
+- **Surcharges de permissions** — permissions par rôle ou par utilisateur
+
+## Modifier des canaux
+
+L\'action **Modifier un Canal** modifie un canal existant :
+
+- Changer le nom, le sujet, le slowmode, le drapeau NSFW, etc.
+
+## Supprimer des canaux
+
+L\'action **Supprimer un Canal** supprime un canal définitivement.
+
+:::warning
+La suppression d\'un canal est **irréversible** ! Tous les messages du canal seront perdus. Envisagez d\'ajouter une étape de confirmation.
+:::`,
+
+    emojisStickersTitle: 'Émojis & Stickers',
+    emojisStickersBody: `## Émojis personnalisés
+
+L\'action **Créer un Émoji** upload un émoji personnalisé :
+
+- **Nom** — nom de l\'émoji (alphanumérique et underscores)
+- **Image** — URL ou base64 de l\'image
+- **Rôles** — restreindre l\'utilisation à certains rôles (optionnel)
+
+## Stickers
+
+L\'action **Créer un Sticker** ajoute un sticker personnalisé :
+
+- **Nom** — nom du sticker
+- **Description** — ce que le sticker représente
+- **Tags** — émoji associé pour les suggestions
+- **Fichier** — l\'image du sticker (PNG, APNG ou Lottie)
+
+:::info
+Les serveurs gratuits sont limités à **50 émojis** et **5 stickers**. Les serveurs boostés ont plus de places.
+:::`,
+
+    invitesWebhooksTitle: 'Invitations & Webhooks',
+    invitesWebhooksBody: `## Invitations
+
+L\'action **Créer une Invitation** génère une invitation au serveur :
+
+- **Canal** — vers quel canal l\'invitation mène
+- **Utilisations max** — combien de fois elle peut être utilisée (0 = illimité)
+- **Durée max** — temps d\'expiration en secondes (0 = jamais)
+- **Temporaire** — expulser le membre quand il se déconnecte s\'il n\'a pas de rôle
+
+## Webhooks
+
+L\'action **Créer un Webhook** configure un webhook :
+
+- **Canal** — canal cible
+- **Nom** — nom d\'affichage du webhook
+- **Avatar** — photo de profil du webhook
+
+L\'action **Envoyer un Webhook** poste un message via webhook :
+
+- **URL** — l\'URL du webhook
+- **Contenu** — texte du message
+- **Nom d\'utilisateur** — remplacer le nom du webhook
+- **URL de l\'avatar** — remplacer la photo de profil
+
+:::tip
+Les webhooks sont parfaits pour les notifications entre serveurs, les systèmes de logs ou l\'envoi de messages qui semblent provenir d\'un utilisateur personnalisé.
+:::`,
+
+    // ── Vocal ──
+    voiceTitle: 'Canaux Vocaux',
+    voiceDesc: 'Rejoindre, quitter, jouer de l\'audio et gérer les connexions vocales.',
+    joinLeaveTitle: 'Rejoindre & Quitter un Vocal',
+    joinLeaveBody: `## Rejoindre un canal vocal
+
+L\'action **Rejoindre un Vocal** connecte le bot à un canal vocal :
+
+- **Canal** — quel canal vocal rejoindre
+- **Sourdine propre** — si le bot se met en sourdine (recommandé)
+- **Muet propre** — si le bot se mute
+
+## Quitter
+
+L\'action **Quitter le Vocal** déconnecte le bot de son canal vocal actuel.
+
+:::info
+Le bot a besoin des permissions **Se connecter** et **Parler** pour le canal vocal cible.
+:::`,
+
+    playAudioTitle: 'Jouer de l\'Audio',
+    playAudioBody: `## Jouer de l\'audio
+
+L\'action **Jouer de l\'Audio** diffuse de l\'audio dans un canal vocal :
+
+- **Source** — URL vers un fichier ou flux audio
+- **Volume** — volume de lecture (0-100%)
+
+## Contrôles
+
+- **Pause** — arrêter temporairement la lecture
+- **Reprendre** — continuer la lecture
+- **Stop** — arrêter complètement la lecture
+
+:::tip
+Les formats supportés incluent MP3, OGG et WAV. Pour de meilleures performances, utilisez des liens directs vers des fichiers audio.
+:::`,
+
+    moveDisconnectTitle: 'Déplacer & Déconnecter des Utilisateurs',
+    moveDisconnectBody: `## Déplacer des utilisateurs
+
+L\'action **Déplacer un Membre** transfère un utilisateur vers un autre canal vocal :
+
+- **Utilisateur** — qui déplacer
+- **Canal** — canal vocal de destination
+
+## Déconnecter des utilisateurs
+
+L\'action **Déconnecter un Membre** retire un utilisateur du vocal :
+
+- **Utilisateur** — qui déconnecter
+
+:::warning
+Les deux actions nécessitent la permission **Déplacer des Membres**. Le bot ne peut pas déplacer des utilisateurs vers des canaux auxquels il n\'a pas accès.
+:::`,
+
+    // ── Bot ──
+    botTitle: 'Paramètres du Bot',
+    botDesc: 'Configurez la présence, l\'avatar et le pseudo de votre bot.',
+    presenceTitle: 'Présence & Statut du Bot',
+    presenceBody: `## Définir le statut
+
+L\'action **Définir la Présence** change le statut en ligne de votre bot :
+
+- **Statut** — En ligne, Inactif, Ne pas déranger ou Invisible
+- **Type d\'activité** — Joue à, Diffuse, Écoute, Regarde, Participe à
+- **Texte d\'activité** — ce à quoi le bot « joue », « regarde », etc.
+
+## Présence dynamique
+
+Utilisez des variables pour créer des messages de statut dynamiques :
+
+- \`Joue avec {guild.memberCount} membres\`
+- \`Regarde {guild.name}\`
+
+:::tip
+Définissez la présence dans un gestionnaire d\'événement **clientReady** pour qu\'elle soit appliquée à chaque démarrage du bot.
+:::`,
+
+    nicknameAvatarTitle: 'Pseudo & Avatar',
+    nicknameAvatarBody: `## Changer le pseudo
+
+L\'action **Définir le Pseudo** change le pseudo du bot dans un serveur spécifique :
+
+- **Pseudo** — le nouveau nom d\'affichage (laissez vide pour réinitialiser)
+
+## Changer l\'avatar
+
+L\'action **Définir l\'Avatar** met à jour la photo de profil du bot :
+
+- **URL de l\'image** — lien vers la nouvelle image d\'avatar
+
+:::warning
+Discord limite les changements d\'avatar à **deux par heure**. N\'utilisez pas cela dans des workflows fréquemment déclenchés !
+:::`,
+
+    // ── Logique ──
+    logicTitle: 'Logique & Flux',
+    logicDesc: 'Conditions, boucles, variables et manipulation de données.',
+    conditionsTitle: 'Conditions (Si/Sinon)',
+    conditionsBody: `Le nœud **Condition** vous permet de créer une logique de branchement — si quelque chose est vrai, faire X ; sinon, faire Y.
+
+## Configuration
+
+- **Valeur gauche** — la valeur à vérifier (ex. \`{user.id}\`)
+- **Opérateur** — égal, différent, contient, supérieur à, inférieur à, etc.
+- **Valeur droite** — la valeur de comparaison
+
+## Sorties
+
+- Chemin **Vrai** (poignée verte) — s\'exécute quand la condition est remplie
+- Chemin **Faux** (poignée rouge) — s\'exécute quand elle ne l\'est pas
+
+## Combiner des conditions
+
+Enchaînez plusieurs nœuds condition pour une logique complexe :
+
+- ET : connectez les conditions en série
+- OU : connectez le même déclencheur à plusieurs branches de condition
+
+:::tip
+Utilisez les conditions pour vérifier les permissions, comparer des valeurs, filtrer des événements ou créer des réponses différentes basées sur la saisie de l\'utilisateur.
+:::`,
+
+    loopsTitle: 'Boucles',
+    loopsBody: `Le nœud **Boucle** répète un ensemble d\'actions plusieurs fois.
+
+## Types
+
+- **Boucle For** — répéter un nombre fixe de fois
+- **Pour Chaque** — itérer sur une liste (ex. membres du serveur, rôles)
+- **Tant que** — répéter tant qu\'une condition est vraie
+
+## Configuration
+
+- **Compteur** (boucle for) — combien d\'itérations
+- **Liste** (pour chaque) — les données à parcourir
+- **Condition** (tant que) — vérifiée avant chaque itération
+
+## Variables de boucle
+
+À l\'intérieur de la boucle, vous pouvez accéder à :
+
+- \`{loop.index}\` — numéro de l\'itération courante (commence à 0)
+- \`{loop.value}\` — élément courant (boucles pour-chaque)
+- \`{loop.length}\` — nombre total d\'itérations
+
+:::warning
+Évitez les boucles infinies ! Assurez-vous toujours que votre condition while deviendra éventuellement fausse. DisFlow a une limite de sécurité de 1000 itérations.
+:::`,
+
+    variablesTitle: 'Variables',
+    variablesBody: `Les variables vous permettent de **stocker et réutiliser des données** dans votre workflow.
+
+## Définir des variables
+
+Utilisez l\'action **Définir une Variable** :
+
+- **Nom** — nom de la variable (ex. \`compteur\`)
+- **Valeur** — les données à stocker
+
+## Utiliser des variables
+
+Référencez les variables avec des accolades : \`{compteur}\`, \`{nomUtilisateur}\`, etc.
+
+## Portée
+
+- **Variables de workflow** — disponibles dans l\'exécution courante
+- **Variables globales** — persistent entre les exécutions (stockées en base de données)
+
+## Types de variables
+
+- **Texte** — données textuelles
+- **Nombre** — entiers et décimaux
+- **Booléen** — vrai/faux
+- **Tableau** — listes de valeurs
+- **Objet** — paires clé-valeur
+
+:::tip
+Utilisez l\'action **Définir une Variable** juste après un déclencheur pour capturer et nommer les données importantes pour une utilisation ultérieure dans le workflow.
+:::`,
+
+    mathStringTitle: 'Opérations Mathématiques & Texte',
+    mathStringBody: `## Opérations mathématiques
+
+Le nœud **Math** effectue des calculs :
+
+- **Addition / Soustraction / Multiplication / Division**
+- **Modulo** — reste après division
+- **Puissance** — exponentiation
+- **Aléatoire** — générer un nombre aléatoire
+- **Arrondi / Plancher / Plafond**
+- **Min / Max** — de deux valeurs
+
+## Opérations sur le texte
+
+Le nœud **Texte** manipule les chaînes :
+
+- **Majuscule / Minuscule**
+- **Trim** — supprimer les espaces
+- **Remplacer** — chercher et remplacer du texte
+- **Diviser** — diviser le texte en tableau
+- **Extraire** — extraire une portion
+- **Longueur** — nombre de caractères
+- **Contient** — vérifier si le texte contient une sous-chaîne
+
+:::tip
+Enchaînez les opérations Math et Texte avec des variables pour construire des réponses dynamiques basées sur les données.
+:::`,
+
+    httpWebhookTitle: 'Requêtes HTTP & Webhooks',
+    httpWebhookBody: `## Faire des requêtes HTTP
+
+L\'action **Requête HTTP** appelle des APIs externes :
+
+- **Méthode** — GET, POST, PUT, DELETE, PATCH
+- **URL** — l\'endpoint de l\'API
+- **En-têtes** — en-têtes personnalisés (ex. Authorization)
+- **Corps** — payload de la requête (JSON)
+
+## Réponse
+
+La réponse est disponible comme variables :
+
+- \`{http.status}\` — code de statut
+- \`{http.body}\` — corps de la réponse
+- \`{http.headers}\` — en-têtes de la réponse
+
+## Exemple : Bot météo
+
+1. Gestionnaire de Commande : /meteo {ville}
+2. Requête HTTP : GET https://api.example.com/weather?city={args.ville}
+3. Envoyer un Message : La météo à {args.ville} est de {http.body.temp}°C
+
+:::warning
+Soyez prudent avec les APIs externes — elles peuvent limiter vos requêtes. Ajoutez une gestion d\'erreurs pour les requêtes échouées.
+:::`,
+
+    // ── Base de données ──
+    databaseTitle: 'Base de Données',
+    databaseDesc: 'Stockez et interrogez des données persistantes avec la base de données intégrée de votre bot.',
+    sqlBasicsTitle: 'Bases de la Base de Données',
+    sqlBasicsBody: `DisFlow fournit à chaque bot une **base de données MySQL intégrée** pour le stockage persistant de données.
+
+## Que pouvez-vous stocker ?
+
+- Profils utilisateurs et niveaux
+- Économie (pièces, inventaire)
+- Avertissements et logs de modération
+- Paramètres personnalisés par serveur
+- Toute donnée structurée dont votre bot a besoin
+
+## Accéder à la base de données
+
+1. Dans l\'Éditeur de Workflow, utilisez les nœuds **Base de données** (Créer une Table, Select, Insert, Update, Delete)
+2. Depuis le Tableau de bord, utilisez le **Visualiseur de Base de Données** pour parcourir les tables
+
+:::tip
+Planifiez la structure de votre base de données avant de construire. Réfléchissez aux données que vous devez stocker et comment elles sont liées.
+:::`,
+
+    createTableTitle: 'Créer des Tables',
+    createTableBody: `L\'action **Créer une Table** met en place une nouvelle table de base de données.
+
+## Configuration
+
+- **Nom de la table** — alphanumérique et underscores (ex. \`niveaux_utilisateurs\`)
+- **Colonnes** — définissez chaque colonne avec :
+  - **Nom** — nom de la colonne
+  - **Type** — INT, VARCHAR(255), TEXT, BOOLEAN, DATETIME, etc.
+  - **Clé primaire** — identifiant unique
+  - **Auto-incrément** — assigner automatiquement les IDs
+  - **Défaut** — valeur par défaut
+  - **Non null** — exiger une valeur
+
+## Exemple : Table de niveaux utilisateurs
+
+- \`id\` — INT, clé primaire, auto-incrément
+- \`user_id\` — VARCHAR(20), non null
+- \`guild_id\` — VARCHAR(20), non null
+- \`xp\` — INT, défaut 0
+- \`level\` — INT, défaut 1
+
+:::info
+Les tables sont créées par bot. Chaque bot a sa propre base de données isolée.
+:::`,
+
+    selectInsertTitle: 'Interroger les Données',
+    selectInsertBody: `## SELECT (lire les données)
+
+L\'action **Select** récupère des données :
+
+- **Table** — quelle table interroger
+- **Colonnes** — quelles colonnes retourner (* pour toutes)
+- **Where** — conditions pour filtrer les résultats
+- **Trier par** — trier les résultats
+- **Limite** — nombre maximum de lignes à retourner
+
+Les résultats sont disponibles comme \`{db.rows}\` (tableau) et \`{db.rows[0].nomColonne}\`.
+
+## INSERT (écrire des données)
+
+L\'action **Insert** ajoute une nouvelle ligne :
+
+- **Table** — table cible
+- **Valeurs** — paires clé-valeur pour chaque colonne
+
+## UPDATE
+
+L\'action **Update** modifie des lignes existantes :
+
+- **Table** — table cible
+- **Set** — quelles colonnes changer
+- **Where** — quelles lignes mettre à jour
+
+## DELETE
+
+L\'action **Delete** supprime des lignes :
+
+- **Table** — table cible
+- **Where** — quelles lignes supprimer
+
+:::warning
+Utilisez toujours une clause WHERE avec UPDATE et DELETE pour éviter d\'affecter toutes les lignes !
+:::`,
+
+    dbViewerTitle: 'Visualiseur de Base de Données',
+    dbViewerBody: `Le **Visualiseur de Base de Données** est disponible depuis la barre latérale du Tableau de bord.
+
+## Fonctionnalités
+
+- **Parcourir les tables** — voir toutes les tables d\'un bot
+- **Voir les données** — vue paginée des lignes
+- **Rechercher** — filtrer les lignes par valeurs de colonnes
+- **Modifier** — modifier les valeurs directement dans le visualiseur
+- **Supprimer** — retirer des lignes depuis l\'interface
+- **Exporter** — télécharger les données de la table en CSV
+
+## Accéder au visualiseur
+
+1. Allez dans **Tableau de bord → Bases de données**
+2. Sélectionnez un bot pour voir ses tables
+3. Cliquez sur un nom de table pour parcourir ses données
+
+:::tip
+Utilisez le Visualiseur de Base de Données pour le débogage — vérifiez si vos workflows lisent et écrivent correctement les données.
+:::`,
+
+    // ── Avancé ──
+    advancedTitle: 'Fonctionnalités Avancées',
+    advancedDesc: 'Exécution de code, chat IA, templates et fonctionnalités avancées.',
+    codeExecTitle: 'Exécution de Code Personnalisé',
+    codeExecBody: `Le nœud **Code** vous permet d\'écrire du JavaScript personnalisé qui s\'exécute dans votre workflow.
+
+## Configuration
+
+- **Code** — votre code JavaScript
+- **Entrées** — variables disponibles dans le code
+- **Sortie** — le nom de la variable pour stocker le résultat
+
+## APIs disponibles
+
+À l\'intérieur du nœud code, vous avez accès à :
+
+- \`inputs\` — les variables que vous avez définies
+- \`return\` — retourner une valeur à stocker dans la variable de sortie
+
+## Exemple : Couleur aléatoire
+
+\`\`\`javascript
+const couleurs = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00'];
+return couleurs[Math.floor(Math.random() * couleurs.length)];
+\`\`\`
+
+:::warning
+Le code s\'exécute dans un environnement sandboxé. Vous ne pouvez pas accéder au système de fichiers, au réseau ou aux modules Node.js.
+:::`,
+
+    canvasCardTitle: 'Canvas Cards & Organisation',
+    canvasCardBody: `## Grouper des nœuds
+
+Utilisez les **Canvas Cards** (groupes) pour organiser visuellement votre workflow :
+
+- Sélectionnez plusieurs nœuds (Shift + clic)
+- Clic droit → « Grouper la Sélection »
+- Donnez un nom et une couleur au groupe
+
+## Avantages
+
+- Regroupez les nœuds liés ensemble
+- Ajoutez des descriptions pour expliquer les sections
+- Réduisez les groupes pour simplifier la vue
+- Déplacez les groupes comme une seule unité
+
+:::tip
+Utilisez les groupes pour séparer les différentes fonctionnalités — ex. un groupe pour le système de bienvenue, un autre pour la modération, et un autre pour le système de niveaux.
+:::`,
+
+    templatesTitle: 'Templates',
+    templatesBody: `Les templates sont des **workflows pré-construits** que vous pouvez insérer dans votre canevas en un clic.
+
+## Utiliser les templates
+
+1. Ouvrez l\'onglet **Templates** dans la barre latérale gauche
+2. Parcourez par catégorie ou recherchez par nom
+3. Cliquez sur **Insérer** pour ajouter le template à votre canevas
+
+## Catégories disponibles
+
+- **Modération** — kick, ban, avertissement, purge
+- **Utilisateur** — bienvenue, au revoir, niveaux
+- **Serveur** — auto-rôle, logs, retours
+- **Utilitaire** — ping, aide, commandes d\'info
+
+## Personnaliser les templates
+
+Après avoir inséré un template :
+
+1. Examinez les nœuds et connexions
+2. Modifiez les paramètres (noms de canaux, messages, etc.)
+3. Sauvegardez et déployez
+
+:::tip
+Les templates sont un excellent point de départ. Insérez-en un, apprenez de la disposition des nœuds, et personnalisez-le selon vos besoins.
+:::`,
+
+    aiChatTitle: 'Assistant IA',
+    aiChatBody: `Le **Chat IA** est disponible depuis la barre inférieure de l\'Éditeur de Workflow.
+
+## Comment il peut vous aider
+
+- **Expliquer des nœuds** — demandez ce que fait un nœud spécifique
+- **Suggérer des workflows** — décrivez ce que vous voulez et obtenez un guide étape par étape
+- **Déboguer des problèmes** — collez une erreur et obtenez de l\'aide pour la résoudre
+- **Répondre à des questions** — tout ce qui concerne DisFlow ou les bots Discord
+
+## Comment l\'utiliser
+
+1. Cliquez sur le bouton **Chat IA** dans la barre inférieure
+2. Tapez votre question ou décrivez ce que vous voulez construire
+3. L\'IA répond avec des explications et suggestions
+
+:::tip
+Soyez précis dans vos questions ! Au lieu de « Comment faire un bot ? », demandez « Comment créer une commande /ban qui vérifie les permissions de modérateur ? »
+:::`,
+
+    // ── Déploiement ──
+    deploymentTitle: 'Déploiement',
+    deploymentDesc: 'Sauvegardez, déployez et résolvez les problèmes de vos workflows.',
+    saveDeployTitle: 'Sauvegarder & Déployer',
+    saveDeployBody: `## Sauvegarder
+
+Cliquez sur le bouton **Sauvegarder** (ou Ctrl + S) pour enregistrer votre workflow. Cela stocke vos nœuds, connexions et configurations.
+
+## Déployer
+
+Cliquez sur le bouton **Déployer** pour pousser votre workflow vers votre bot en production :
+
+1. Le bot se reconstruit automatiquement avec vos dernières modifications
+2. Il redémarre et se reconnecte à Discord
+3. Vos nouveaux workflows sont actifs
+
+## Quelle est la différence ?
+
+- **Sauvegarder** — enregistre votre travail mais n\'affecte pas le bot en cours d\'exécution
+- **Déployer** — pousse les changements sauvegardés vers le bot en production
+
+:::tip
+Sauvegardez fréquemment pendant l\'édition ! Ne déployez que quand vous êtes prêt à mettre en production vos changements.
+:::
+
+:::warning
+Le déploiement redémarre le bot. Il y aura un bref moment où le bot est hors ligne (généralement moins de 10 secondes).
+:::`,
+
+    collaborationTitle: 'Collaboration & Partage',
+    collaborationBody: `## Partager des workflows
+
+Vous pouvez partager des workflows avec d\'autres utilisateurs DisFlow :
+
+1. **Exportez** votre workflow en JSON
+2. Envoyez le fichier à votre collaborateur
+3. Il **l\'importe** dans son éditeur
+
+## Fonctionnalités d\'équipe
+
+- **Page Membres** — invitez des membres d\'équipe pour gérer vos bots
+- **Accès par rôle** — assignez des rôles éditeur ou lecteur
+- **Journal d\'activité** — voyez qui a fait des changements et quand
+
+:::info
+Les fonctionnalités de collaboration en équipe peuvent varier selon votre plan d\'abonnement.
+:::`,
+
+    troubleshootingTitle: 'Résolution de Problèmes',
+    troubleshootingBody: `## Problèmes courants
+
+### Le bot ne se connecte pas
+- Vérifiez que votre **token** est correct et n\'a pas expiré
+- Vérifiez que les **intents** requis sont activés
+- Assurez-vous que le bot a été **invité** sur votre serveur
+
+### Les commandes slash n\'apparaissent pas
+- Discord met en cache les commandes — attendez jusqu\'à **1 heure** pour les nouvelles commandes
+- Vérifiez que le bot a le scope **applications.commands**
+- Vérifiez que le nom de la commande n\'est pas en conflit avec d\'autres bots
+
+### Le bot ne répond pas
+- Vérifiez la **Console** (barre inférieure) pour les messages d\'erreur
+- Vérifiez que tous les nœuds sont **connectés** correctement
+- Assurez-vous que les champs de configuration requis sont remplis
+- Vérifiez les paramètres de **permissions** dans Discord
+
+### Erreurs de workflow
+- Ouvrez la **Console** pour voir les logs d\'erreur détaillés
+- Vérifiez s\'il y a des nœuds déconnectés
+- Vérifiez que les noms de variables sont correctement orthographiés
+- Assurez-vous que les tables de base de données existent avant de les interroger
+
+:::tip
+La Console est votre meilleur outil de débogage ! Elle affiche les logs en temps réel de tout ce que fait votre bot. Ouvrez-la depuis la barre inférieure de l\'Éditeur de Workflow.
+:::
+
+## Toujours bloqué ?
+
+- Consultez le serveur **Discord** de support pour l\'aide de la communauté
+- Parcourez cette documentation pour des guides détaillés
+- Utilisez l\'assistant **Chat IA** dans l\'éditeur`,
   },
 };
 

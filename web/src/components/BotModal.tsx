@@ -79,7 +79,7 @@ export default function BotModal({ bot, onClose, onSave }: BotModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000]" onClick={onClose}>
       <div
         className="rounded-2xl shadow-2xl w-full max-w-md mx-4"
         style={{ backgroundColor: 'var(--t-s)', border: '1px solid var(--t-bd)' }}

@@ -320,6 +320,14 @@ export interface TranslationKeys {
     memberSince: string;
     discordLinked: string;
     discordNotLinked: string;
+    linkDiscord: string;
+    linkDiscordDesc: string;
+    unlinkDiscord: string;
+    discordLinkSuccess: string;
+    discordUnlinkSuccess: string;
+    discordLinkFailed: string;
+    discordEmailMismatch: string;
+    discordAlreadyLinked: string;
     planFree: string;
     editProfile: string;
     instanceDefaults: string;
@@ -2002,22 +2010,211 @@ export interface TranslationKeys {
     // Steps — Workflow
     workflowWelcomeTitle: string;
     workflowWelcomeDesc: string;
+    headerTitle: string;
+    headerDesc: string;
+    leftSidebarTitle: string;
+    leftSidebarDesc: string;
+    canvasTitle: string;
+    canvasDesc: string;
     sidebarTitle: string;
     sidebarDesc: string;
     addTriggerTitle: string;
     addTriggerDesc: string;
     addActionTitle: string;
     addActionDesc: string;
-    canvasTitle: string;
-    canvasDesc: string;
     connectTitle: string;
     connectDesc: string;
+    bottomBarTitle: string;
+    bottomBarDesc: string;
     saveTitle: string;
     saveDesc: string;
+    deployTitle: string;
+    deployDesc: string;
     completeTitle: string;
     completeDesc: string;
 
     // Settings (restart)
     restartTour: string;
+  };
+
+  // ── Documentation ───────────────────────────────────────────────────────────
+  docs: {
+    // UI chrome
+    docsLabel: string;
+    homeLabel: string;
+    homeTitle: string;
+    homeSubtitle: string;
+    searchPlaceholder: string;
+    articlesLabel: string;
+
+    // Getting Started
+    gettingStartedTitle: string;
+    gettingStartedDesc: string;
+    whatIsDisflowTitle: string;
+    whatIsDisflowBody: string;
+    createAccountTitle: string;
+    createAccountBody: string;
+    firstBotTitle: string;
+    firstBotBody: string;
+    discordTokenTitle: string;
+    discordTokenBody: string;
+
+    // Dashboard
+    dashboardTitle: string;
+    dashboardDesc: string;
+    dashOverviewTitle: string;
+    dashOverviewBody: string;
+    dashStatsTitle: string;
+    dashStatsBody: string;
+    dashInstancesTitle: string;
+    dashInstancesBody: string;
+    dashSettingsTitle: string;
+    dashSettingsBody: string;
+
+    // Canvas & Editor
+    canvasTitle: string;
+    canvasDesc: string;
+    canvasBasicsTitle: string;
+    canvasBasicsBody: string;
+    addNodesTitle: string;
+    addNodesBody: string;
+    connectNodesTitle: string;
+    connectNodesBody: string;
+    configureNodesTitle: string;
+    configureNodesBody: string;
+    shortcutsTitle: string;
+    shortcutsBody: string;
+    importExportTitle: string;
+    importExportBody: string;
+
+    // Handlers
+    handlersTitle: string;
+    handlersDesc: string;
+    commandHandlerTitle: string;
+    commandHandlerBody: string;
+    eventHandlerTitle: string;
+    eventHandlerBody: string;
+    buttonHandlerTitle: string;
+    buttonHandlerBody: string;
+    selectMenuHandlerTitle: string;
+    selectMenuHandlerBody: string;
+    modalHandlerTitle: string;
+    modalHandlerBody: string;
+
+    // Actions
+    actionsTitle: string;
+    actionsDesc: string;
+    sendMessageTitle: string;
+    sendMessageBody: string;
+    editDeleteTitle: string;
+    editDeleteBody: string;
+    embedsTitle: string;
+    embedsBody: string;
+    reactionsPinsTitle: string;
+    reactionsPinsBody: string;
+    threadsTitle: string;
+    threadsBody: string;
+    dmTitle: string;
+    dmBody: string;
+
+    // Interactions
+    interactionsTitle: string;
+    interactionsDesc: string;
+    buttonsTitle: string;
+    buttonsBody: string;
+    selectMenusTitle: string;
+    selectMenusBody: string;
+    modalsTitle: string;
+    modalsBody: string;
+
+    // Moderation
+    moderationTitle: string;
+    moderationDesc: string;
+    kickBanTitle: string;
+    kickBanBody: string;
+    timeoutMuteTitle: string;
+    timeoutMuteBody: string;
+    bulkDeleteTitle: string;
+    bulkDeleteBody: string;
+    permissionsTitle: string;
+    permissionsBody: string;
+
+    // Guild
+    guildTitle: string;
+    guildDesc: string;
+    rolesTitle: string;
+    rolesBody: string;
+    channelsTitle: string;
+    channelsBody: string;
+    emojisStickersTitle: string;
+    emojisStickersBody: string;
+    invitesWebhooksTitle: string;
+    invitesWebhooksBody: string;
+
+    // Voice
+    voiceTitle: string;
+    voiceDesc: string;
+    joinLeaveTitle: string;
+    joinLeaveBody: string;
+    playAudioTitle: string;
+    playAudioBody: string;
+    moveDisconnectTitle: string;
+    moveDisconnectBody: string;
+
+    // Bot
+    botTitle: string;
+    botDesc: string;
+    presenceTitle: string;
+    presenceBody: string;
+    nicknameAvatarTitle: string;
+    nicknameAvatarBody: string;
+
+    // Logic
+    logicTitle: string;
+    logicDesc: string;
+    conditionsTitle: string;
+    conditionsBody: string;
+    loopsTitle: string;
+    loopsBody: string;
+    variablesTitle: string;
+    variablesBody: string;
+    mathStringTitle: string;
+    mathStringBody: string;
+    httpWebhookTitle: string;
+    httpWebhookBody: string;
+
+    // Database
+    databaseTitle: string;
+    databaseDesc: string;
+    sqlBasicsTitle: string;
+    sqlBasicsBody: string;
+    createTableTitle: string;
+    createTableBody: string;
+    selectInsertTitle: string;
+    selectInsertBody: string;
+    dbViewerTitle: string;
+    dbViewerBody: string;
+
+    // Advanced
+    advancedTitle: string;
+    advancedDesc: string;
+    codeExecTitle: string;
+    codeExecBody: string;
+    canvasCardTitle: string;
+    canvasCardBody: string;
+    templatesTitle: string;
+    templatesBody: string;
+    aiChatTitle: string;
+    aiChatBody: string;
+
+    // Deployment
+    deploymentTitle: string;
+    deploymentDesc: string;
+    saveDeployTitle: string;
+    saveDeployBody: string;
+    collaborationTitle: string;
+    collaborationBody: string;
+    troubleshootingTitle: string;
+    troubleshootingBody: string;
   };
 }
