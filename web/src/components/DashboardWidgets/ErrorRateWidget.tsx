@@ -28,8 +28,11 @@ export default memo(function ErrorRateWidget({ t }: Props) {
   return (
     <div className="dnc-card p-5" style={{ background: 'var(--t-s)', borderColor: 'var(--t-bd)' }}>
       {/* Header */}
-      <div className="flex items-center gap-2.5 mb-3">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: rate > 0 ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)' }}>
+      <div className="flex items-center gap-2.5 mb-4">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center"
+          style={{ background: rate > 0 ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.10)' }}
+        >
           <AlertTriangle className="w-4 h-4" style={{ color: rateColor }} />
         </div>
         <div>
@@ -44,21 +47,33 @@ export default memo(function ErrorRateWidget({ t }: Props) {
         </div>
       ) : (
         <>
-          {/* Big number */}
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-3xl font-bold" style={{ color: rateColor }}>{rate}%</span>
-            <span className="text-xs" style={{ color: 'var(--t-m)' }}>{t.last7Days}</span>
+          {/* Big rate number with visual treatment */}
+          <div
+            className="flex items-baseline gap-2 mb-4 px-4 py-3 rounded-xl"
+            style={{
+              background: rate === 0 ? 'rgba(34,197,94,0.06)' : rate < 10 ? 'rgba(234,179,8,0.06)' : 'rgba(239,68,68,0.06)',
+              border: `1px solid ${rate === 0 ? 'rgba(34,197,94,0.14)' : rate < 10 ? 'rgba(234,179,8,0.14)' : 'rgba(239,68,68,0.14)'}`,
+              boxShadow: rate === 0 ? '0 0 16px rgba(34,197,94,0.06)' : 'none',
+            }}
+          >
+            <span
+              className="text-4xl font-bold tracking-tight"
+              style={{ color: rateColor }}
+            >
+              {rate}%
+            </span>
+            <span className="text-xs font-medium" style={{ color: 'var(--t-m)' }}>{t.last7Days}</span>
           </div>
 
           {/* Mini stats */}
-          <div className="flex gap-4 mb-3">
-            <div>
-              <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--t-m)' }}>{t.totalErrors}</p>
-              <p className="text-sm font-bold" style={{ color: '#ef4444' }}>{data?.totalErrors ?? 0}</p>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="rounded-lg px-3 py-2" style={{ background: 'var(--t-s2)' }}>
+              <p className="text-[9px] uppercase tracking-widest font-bold mb-1" style={{ color: 'var(--t-m)' }}>{t.totalErrors}</p>
+              <p className="text-base font-bold" style={{ color: data?.totalErrors ? '#ef4444' : 'var(--t-tx)' }}>{data?.totalErrors ?? 0}</p>
             </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--t-m)' }}>{t.totalExecutions}</p>
-              <p className="text-sm font-bold" style={{ color: 'var(--t-tx)' }}>{data?.totalExecutions ?? 0}</p>
+            <div className="rounded-lg px-3 py-2" style={{ background: 'var(--t-s2)' }}>
+              <p className="text-[9px] uppercase tracking-widest font-bold mb-1" style={{ color: 'var(--t-m)' }}>{t.totalExecutions}</p>
+              <p className="text-base font-bold" style={{ color: 'var(--t-tx)' }}>{data?.totalExecutions ?? 0}</p>
             </div>
           </div>
 
@@ -70,17 +85,18 @@ export default memo(function ErrorRateWidget({ t }: Props) {
                   <XAxis dataKey="date" hide />
                   <Tooltip
                     contentStyle={{
-                      background: 'var(--t-s2)',
-                      border: '1px solid var(--t-bd)',
+                      background: '#1A1940',
+                      border: '1px solid rgba(134,134,172,0.22)',
                       borderRadius: 8,
                       fontSize: 11,
-                      color: 'var(--t-tx)',
+                      color: '#FFFFFF',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     }}
                     labelFormatter={(v: any) => String(v)}
                   />
                   <Bar dataKey="errors" radius={[3, 3, 0, 0]} maxBarSize={16}>
                     {data.daily.map((entry, idx) => (
-                      <Cell key={idx} fill={entry.errors > 0 ? '#ef4444' : 'var(--t-bd)'} fillOpacity={entry.errors > 0 ? 0.8 : 0.3} />
+                      <Cell key={idx} fill={entry.errors > 0 ? '#ef4444' : 'rgba(134,134,172,0.18)'} fillOpacity={entry.errors > 0 ? 0.8 : 0.6} />
                     ))}
                   </Bar>
                 </BarChart>

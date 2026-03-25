@@ -56,9 +56,14 @@ export default memo(function ResourceWidget({ bots, t }: Props) {
           <div className="animate-spin rounded-full h-6 w-6 border-2 border-t-transparent" style={{ borderColor: 'var(--t-a)', borderTopColor: 'transparent' }} />
         </div>
       ) : runningBots.length === 0 ? (
-        <div className="text-center py-6">
-          <Cpu className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--t-m)' }} />
-          <p className="text-sm" style={{ color: 'var(--t-m)' }}>{t.notRunning}</p>
+        <div className="text-center py-8">
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            style={{ background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.14)' }}
+          >
+            <Cpu className="w-7 h-7" style={{ color: 'rgba(168,85,247,0.6)' }} />
+          </div>
+          <p className="text-sm font-medium" style={{ color: 'var(--t-m)' }}>{t.notRunning}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -68,14 +73,18 @@ export default memo(function ResourceWidget({ bots, t }: Props) {
             const memPct = r ? parsePercent(r.memPercent) : 0;
 
             return (
-              <div key={bot.id} className="rounded-lg px-3 py-2.5" style={{ background: 'var(--t-s2)' }}>
-                <p className="text-xs font-semibold mb-2 truncate" style={{ color: 'var(--t-tx)' }}>{bot.name}</p>
-                <div className="space-y-1.5">
+              <div key={bot.id} className="rounded-xl px-3 py-3" style={{ background: 'var(--t-s2)', border: '1px solid var(--t-bd)' }}>
+                {/* Bot name as section header */}
+                <div className="flex items-center gap-1.5 mb-2.5 pb-2" style={{ borderBottom: '1px solid var(--t-bd)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#22c55e' }} />
+                  <p className="text-xs font-semibold truncate" style={{ color: 'var(--t-tx)' }}>{bot.name}</p>
+                </div>
+                <div className="space-y-2">
                   {/* CPU */}
                   <div className="flex items-center gap-2">
                     <Cpu className="w-3 h-3 shrink-0" style={{ color: 'var(--t-m)' }} />
-                    <span className="text-[10px] w-10 shrink-0" style={{ color: 'var(--t-m)' }}>{t.cpu}</span>
-                    <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--t-bd)' }}>
+                    <span className="text-[10px] w-10 shrink-0 font-medium" style={{ color: 'var(--t-m)' }}>{t.cpu}</span>
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(134,134,172,0.12)' }}>
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{ width: `${Math.min(cpuPct, 100)}%`, background: cpuPct > 80 ? '#ef4444' : cpuPct > 50 ? '#eab308' : '#22c55e' }}
@@ -86,11 +95,11 @@ export default memo(function ResourceWidget({ bots, t }: Props) {
                   {/* Memory */}
                   <div className="flex items-center gap-2">
                     <HardDrive className="w-3 h-3 shrink-0" style={{ color: 'var(--t-m)' }} />
-                    <span className="text-[10px] w-10 shrink-0" style={{ color: 'var(--t-m)' }}>{t.memory}</span>
-                    <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--t-bd)' }}>
+                    <span className="text-[10px] w-10 shrink-0 font-medium" style={{ color: 'var(--t-m)' }}>{t.memory}</span>
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(134,134,172,0.12)' }}>
                       <div
                         className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(memPct, 100)}%`, background: memPct > 80 ? '#ef4444' : memPct > 50 ? '#eab308' : '#3b82f6' }}
+                        style={{ width: `${Math.min(memPct, 100)}%`, background: memPct > 80 ? '#ef4444' : memPct > 50 ? '#eab308' : '#8686AC' }}
                       />
                     </div>
                     <span className="text-[10px] w-10 text-right font-mono" style={{ color: 'var(--t-tx)' }}>{r?.memPercent ?? '—'}</span>
@@ -98,8 +107,8 @@ export default memo(function ResourceWidget({ bots, t }: Props) {
                   {/* Network */}
                   <div className="flex items-center gap-2">
                     <Wifi className="w-3 h-3 shrink-0" style={{ color: 'var(--t-m)' }} />
-                    <span className="text-[10px] w-10 shrink-0" style={{ color: 'var(--t-m)' }}>{t.network}</span>
-                    <span className="text-[10px] font-mono truncate" style={{ color: 'var(--t-tx)' }}>{r?.netIO ?? '—'}</span>
+                    <span className="text-[10px] w-10 shrink-0 font-medium" style={{ color: 'var(--t-m)' }}>{t.network}</span>
+                    <span className="text-[10px] font-mono truncate" style={{ color: 'var(--t-sub)' }}>{r?.netIO ?? '—'}</span>
                   </div>
                 </div>
               </div>

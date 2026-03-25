@@ -54,9 +54,9 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-150"
+      className="shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-200"
       style={{
-        width: collapsed ? 56 : 220,
+        width: collapsed ? 64 : 256,
         background: 'var(--t-s)',
         borderRight: '1px solid var(--t-bd)',
         position: 'relative',
@@ -64,25 +64,47 @@ export default function Sidebar() {
     >
       {/* Brand */}
       <div
-        className="flex items-center h-14 shrink-0 overflow-hidden"
-        style={{ borderBottom: '1px solid var(--t-bd)', padding: collapsed ? '0 14px' : '0 16px' }}
+        className="flex items-center h-16 shrink-0 overflow-hidden"
+        style={{ borderBottom: '1px solid var(--t-bd)', padding: collapsed ? '0 16px' : '0 16px' }}
       >
-        <img src="/logo.ico" alt="DisFlow" className="w-7 h-7 rounded-lg shrink-0 object-contain" />
+        <div className="relative shrink-0">
+          <img
+            src="/logo.ico"
+            alt="DisFlow"
+            className="w-7 h-7 rounded-lg object-contain"
+            style={{ boxShadow: '0 0 0 2px rgba(134,134,172,0.18)' }}
+          />
+        </div>
         {!collapsed && (
-          <span className="ml-3 text-sm font-bold tracking-wide whitespace-nowrap overflow-hidden" style={{ color: 'var(--t-tx)' }}>
-            DisFlow
-          </span>
+          <div className="ml-3 flex items-center gap-2 overflow-hidden">
+            <span className="text-base font-bold tracking-tight whitespace-nowrap" style={{ color: 'var(--t-tx)' }}>
+              DisFlow
+            </span>
+            <span
+              className="text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0"
+              style={{ background: 'rgba(134,134,172,0.14)', color: 'var(--t-a)' }}
+            >
+              beta
+            </span>
+          </div>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-3" style={{ padding: collapsed ? '12px 8px' : '12px 8px' }}>
+      <nav className="flex-1 overflow-y-auto" style={{ padding: collapsed ? '12px 8px' : '12px 8px' }}>
         {GROUPS.map(({ label, links }) => (
-          <div key={label} className="mb-2">
+          <div key={label} className="mb-3">
             {!collapsed && (
               <p
-                className="mb-1 text-[10px] font-bold uppercase tracking-widest select-none"
-                style={{ color: 'var(--t-m)', padding: '0 10px' }}
+                className="mb-1.5 select-none"
+                style={{
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: 'var(--t-m)',
+                  padding: '0 12px',
+                }}
               >
                 {label}
               </p>
@@ -99,20 +121,21 @@ export default function Sidebar() {
                     title={collapsed ? linkLabel : undefined}
                     className={({ isActive }) => {
                       const active = forceActive || isActive;
-                      return `flex items-center rounded-lg text-sm font-medium transition-all mb-0.5 group relative ${collapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-2.5 py-2'
-                        } ${active ? '' : ''}`;
+                      return `flex items-center rounded-xl text-sm font-medium transition-all duration-200 mb-0.5 group relative ${
+                        collapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'
+                      } ${active ? '' : ''}`;
                     }}
                     style={({ isActive }) => {
                       const active = forceActive || isActive;
                       return {
-                        background: active ? 'var(--t-aa)' : 'transparent',
-                        color: active ? 'var(--t-a)' : 'var(--t-tx)',
+                        background: active ? 'rgba(134,134,172,0.16)' : 'transparent',
+                        color: active ? '#FFFFFF' : 'var(--t-tx)',
                       };
                     }}
                     onMouseEnter={e => {
                       const el = e.currentTarget;
                       if (!(el as any).__isActive) {
-                        el.style.background = 'var(--t-s2)';
+                        el.style.background = 'rgba(134,134,172,0.08)';
                         el.style.color = 'var(--t-tx)';
                       }
                     }}
@@ -137,10 +160,10 @@ export default function Sidebar() {
                           <Icon
                             className="w-4 h-4 shrink-0"
                             strokeWidth={1.5}
-                            style={{ color: active ? 'var(--t-a)' : 'var(--t-tx)' }}
+                            style={{ color: active ? 'var(--t-a)' : 'var(--t-sub)' }}
                           />
                           {!collapsed && (
-                            <span style={{ color: active ? 'var(--t-a)' : 'var(--t-tx)' }}>{linkLabel}</span>
+                            <span style={{ color: active ? '#FFFFFF' : 'var(--t-sub)' }}>{linkLabel}</span>
                           )}
                         </>
                       );
@@ -149,21 +172,21 @@ export default function Sidebar() {
 
                   {/* ── Instance sub-list under Instances link ── */}
                   {to === '/dashboard' && !collapsed && bots.length > 0 && (
-                    <div className="ml-3 mt-0.5 mb-1 space-y-0.5" style={{ borderLeft: '1px solid var(--t-bd)', paddingLeft: 8 }}>
+                    <div className="ml-4 mt-0.5 mb-1 space-y-0.5" style={{ borderLeft: '1px solid var(--t-bd)', paddingLeft: 8 }}>
                       {bots.map(bot => {
                         const isBotActive = location.pathname === `/dashboard/instances/${bot.id}`;
                         return (
                           <button
                             key={bot.id}
                             onClick={() => navigate(`/dashboard/instances/${bot.id}`)}
-                            className="w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-left transition"
+                            className="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-all duration-200"
                             style={{
-                              background: isBotActive ? 'var(--t-aa)' : 'transparent',
-                              color: isBotActive ? 'var(--t-a)' : 'var(--t-sub)',
+                              background: isBotActive ? 'rgba(134,134,172,0.16)' : 'transparent',
+                              color: isBotActive ? '#FFFFFF' : 'var(--t-sub)',
                             }}
                             onMouseEnter={e => {
                               if (!isBotActive) {
-                                (e.currentTarget as HTMLElement).style.background = 'var(--t-s2)';
+                                (e.currentTarget as HTMLElement).style.background = 'rgba(134,134,172,0.08)';
                                 (e.currentTarget as HTMLElement).style.color = 'var(--t-tx)';
                               }
                             }}
@@ -175,7 +198,7 @@ export default function Sidebar() {
                             }}
                           >
                             <span className="relative shrink-0">
-                              <BotIcon className="w-3.5 h-3.5" />
+                              <BotIcon className="w-3 h-3" />
                               <Circle
                                 className="w-1.5 h-1.5 fill-current absolute -bottom-0.5 -right-0.5"
                                 style={{ color: STATUS_DOT[bot.status] ?? '#6b7280' }}
@@ -190,21 +213,21 @@ export default function Sidebar() {
 
                   {/* ── Database sub-list under Bases de données link ── */}
                   {to === '/dashboard/databases' && !collapsed && bots.length > 0 && (
-                    <div className="ml-3 mt-0.5 mb-1 space-y-0.5" style={{ borderLeft: '1px solid var(--t-bd)', paddingLeft: 8 }}>
+                    <div className="ml-4 mt-0.5 mb-1 space-y-0.5" style={{ borderLeft: '1px solid var(--t-bd)', paddingLeft: 8 }}>
                       {bots.map(bot => {
                         const isDbActive = location.pathname === `/dashboard/databases/${bot.id}`;
                         return (
                           <button
                             key={bot.id}
                             onClick={() => navigate(`/dashboard/databases/${bot.id}`)}
-                            className="w-full flex items-center gap-2 rounded-md px-2 py-1.5 text-left transition"
+                            className="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-all duration-200"
                             style={{
-                              background: isDbActive ? 'var(--t-aa)' : 'transparent',
-                              color: isDbActive ? 'var(--t-a)' : 'var(--t-sub)',
+                              background: isDbActive ? 'rgba(134,134,172,0.16)' : 'transparent',
+                              color: isDbActive ? '#FFFFFF' : 'var(--t-sub)',
                             }}
                             onMouseEnter={e => {
                               if (!isDbActive) {
-                                (e.currentTarget as HTMLElement).style.background = 'var(--t-s2)';
+                                (e.currentTarget as HTMLElement).style.background = 'rgba(134,134,172,0.08)';
                                 (e.currentTarget as HTMLElement).style.color = 'var(--t-tx)';
                               }
                             }}
@@ -215,7 +238,7 @@ export default function Sidebar() {
                               }
                             }}
                           >
-                            <Database className="w-3.5 h-3.5 shrink-0" />
+                            <Database className="w-3 h-3 shrink-0" />
                             <span className="text-[11px] font-medium truncate flex-1">{bot.name}</span>
                           </button>
                         );
@@ -230,16 +253,16 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="shrink-0 py-2" style={{ borderTop: '1px solid var(--t-bd)', padding: collapsed ? '8px' : '8px 8px' }}>
+      <div className="shrink-0" style={{ borderTop: '1px solid var(--t-bd)', padding: collapsed ? '8px' : '8px' }}>
         {/* User row */}
         {!collapsed && (
           <div
-            className="flex items-center gap-2.5 rounded-lg mb-0.5"
-            style={{ padding: '7px 10px' }}
+            className="flex items-center gap-2.5 rounded-xl mb-1"
+            style={{ padding: '8px 12px' }}
           >
             <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 uppercase"
-              style={{ background: 'var(--t-a)' }}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0 uppercase"
+              style={{ background: 'linear-gradient(135deg, #8686AC, #505081)' }}
             >
               {initials}
             </div>
@@ -255,34 +278,34 @@ export default function Sidebar() {
         <button
           title={collapsed ? t.sidebar.settings : undefined}
           onClick={() => navigate('/dashboard/settings')}
-          className="w-full flex items-center rounded-lg transition mb-0.5"
+          className="w-full flex items-center rounded-xl transition-all duration-200 mb-0.5"
           style={{
             gap: collapsed ? 0 : 10,
             justifyContent: collapsed ? 'center' : 'flex-start',
-            padding: collapsed ? '8px 0' : '7px 10px',
-            color: isSettingsActive ? 'var(--t-a)' : 'var(--t-m)',
-            background: isSettingsActive ? 'var(--t-aa)' : 'transparent',
+            padding: collapsed ? '9px 0' : '8px 12px',
+            color: isSettingsActive ? '#FFFFFF' : 'var(--t-sub)',
+            background: isSettingsActive ? 'rgba(134,134,172,0.16)' : 'transparent',
           }}
-          onMouseEnter={e => { if (!isSettingsActive) { (e.currentTarget as HTMLElement).style.background = 'var(--t-s2)'; (e.currentTarget as HTMLElement).style.color = 'var(--t-tx)'; } }}
-          onMouseLeave={e => { if (!isSettingsActive) { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.color = 'var(--t-m)'; } }}
+          onMouseEnter={e => { if (!isSettingsActive) { (e.currentTarget as HTMLElement).style.background = 'rgba(134,134,172,0.08)'; (e.currentTarget as HTMLElement).style.color = 'var(--t-tx)'; } }}
+          onMouseLeave={e => { if (!isSettingsActive) { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.color = 'var(--t-sub)'; } }}
         >
           <Settings className="w-4 h-4 shrink-0" strokeWidth={1.5} style={{ color: isSettingsActive ? 'var(--t-a)' : undefined }} />
-          {!collapsed && <span className="text-sm">{isSettingsActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full" style={{ background: 'var(--t-a)' }} />}{t.sidebar.settings}</span>}
+          {!collapsed && <span className="text-sm">{t.sidebar.settings}</span>}
         </button>
 
         {/* Logout */}
         <button
           title={collapsed ? t.sidebar.logout : undefined}
           onClick={logout}
-          className="w-full flex items-center rounded-lg transition mb-1"
+          className="w-full flex items-center rounded-xl transition-all duration-200 mb-2"
           style={{
             gap: collapsed ? 0 : 10,
             justifyContent: collapsed ? 'center' : 'flex-start',
-            padding: collapsed ? '8px 0' : '7px 10px',
-            color: 'var(--t-m)',
+            padding: collapsed ? '9px 0' : '8px 12px',
+            color: 'var(--t-sub)',
           }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.08)'; (e.currentTarget as HTMLElement).style.color = '#f87171'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.color = 'var(--t-m)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.color = 'var(--t-sub)'; }}
         >
           <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
           {!collapsed && <span className="text-sm">{t.sidebar.logout}</span>}
@@ -294,16 +317,17 @@ export default function Sidebar() {
       <button
         onClick={() => setCollapsed(c => !c)}
         title={collapsed ? t.sidebar.expand : t.sidebar.collapse}
-        className="absolute top-1/2 z-50 w-5 h-5 rounded-full flex items-center justify-center transition-colors"
+        className="absolute top-1/2 z-50 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"
         style={{
-          right: -11,
+          right: -10,
           transform: 'translateY(-50%)',
           backgroundColor: 'var(--t-s)',
           border: '1px solid var(--t-bd)',
           color: 'var(--t-m)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
         }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--t-a)'; e.currentTarget.style.color = 'var(--t-a)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--t-bd)'; e.currentTarget.style.color = 'var(--t-m)'; }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--t-a)'; e.currentTarget.style.color = 'var(--t-a)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(134,134,172,0.12)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--t-bd)'; e.currentTarget.style.color = 'var(--t-m)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.18)'; }}
       >
         {collapsed
           ? <ChevronRight className="w-2.5 h-2.5" strokeWidth={2.5} />

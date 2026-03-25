@@ -37,9 +37,9 @@ export function getBotThemeConfig(theme: BotTheme): ThemeConfig {
       };
     default: // 'dark'
       return {
-        accent: '#7289DA', accentHover: '#3D61DF', accentAlpha: 'rgba(0,82,255,0.14)',
-        bg: '#323339', surface: '#2C2D32', surface2: '#2A2B2F', surface3: '#4A4B52',
-        border: '#36373E', text: '#C6C7C9', subtext: '#E6E6E6', muted: '#FFFFFF',
+        accent: '#8686AC', accentHover: '#9D9DC8', accentAlpha: 'rgba(134,134,172,0.14)',
+        bg: '#0F0E47', surface: '#272757', surface2: '#2D2C65', surface3: '#505081',
+        border: 'rgba(134,134,172,0.18)', text: '#FFFFFF', subtext: 'rgba(255,255,255,0.72)', muted: 'rgba(255,255,255,0.38)',
         btnText: '#FFFFFF', isLight: false,
       };
   }

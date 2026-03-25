@@ -58,7 +58,7 @@ export default memo(function ActivityFeed({ t }: Props) {
     <div className="dnc-card p-5" style={{ background: 'var(--t-s)', borderColor: 'var(--t-bd)' }}>
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--t-aa)' }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(134,134,172,0.12)' }}>
           <Activity className="w-4 h-4" style={{ color: 'var(--t-a)' }} />
         </div>
         <div>
@@ -73,39 +73,54 @@ export default memo(function ActivityFeed({ t }: Props) {
           <div className="animate-spin rounded-full h-6 w-6 border-2 border-t-transparent" style={{ borderColor: 'var(--t-a)', borderTopColor: 'transparent' }} />
         </div>
       ) : activities.length === 0 ? (
-        <div className="text-center py-8">
-          <Activity className="w-10 h-10 mx-auto mb-2" style={{ color: 'var(--t-m)' }} />
-          <p className="text-sm font-medium" style={{ color: 'var(--t-tx)' }}>{t.noActivity}</p>
-          <p className="text-xs mt-1" style={{ color: 'var(--t-m)' }}>{t.noActivityDesc}</p>
+        <div className="text-center py-10">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            style={{ background: 'rgba(134,134,172,0.08)', border: '1px solid rgba(134,134,172,0.14)' }}
+          >
+            <Activity className="w-8 h-8" style={{ color: 'var(--t-a)' }} />
+          </div>
+          <p className="text-sm font-semibold mb-1" style={{ color: 'var(--t-tx)' }}>{t.noActivity}</p>
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--t-m)' }}>{t.noActivityDesc}</p>
         </div>
       ) : (
-        <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
-          {activities.map((item, i) => {
-            const meta = getActivityMeta(item, t);
-            const Icon = meta.icon;
-            return (
-              <div
-                key={`${item.type}-${item.botId}-${item.timestamp}-${i}`}
-                className="flex items-start gap-3 rounded-lg px-2.5 py-2 transition-colors"
-                style={{ background: 'transparent' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--t-s2)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-              >
-                <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: meta.bg }}>
-                  <Icon className="w-3.5 h-3.5" style={{ color: meta.color }} />
+        <div className="relative max-h-[320px] overflow-y-auto pr-1">
+          {/* Timeline connector line */}
+          <div
+            className="absolute left-[18px] top-3 bottom-3 w-px"
+            style={{ background: 'linear-gradient(to bottom, transparent, var(--t-bd) 10%, var(--t-bd) 90%, transparent)' }}
+          />
+          <div className="space-y-1">
+            {activities.map((item, i) => {
+              const meta = getActivityMeta(item, t);
+              const Icon = meta.icon;
+              return (
+                <div
+                  key={`${item.type}-${item.botId}-${item.timestamp}-${i}`}
+                  className="flex items-start gap-3 rounded-xl px-2.5 py-2.5 transition-all duration-200 relative"
+                  style={{ background: 'transparent' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(134,134,172,0.06)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 relative z-10"
+                    style={{ background: meta.bg }}
+                  >
+                    <Icon className="w-3.5 h-3.5" style={{ color: meta.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate" style={{ color: 'var(--t-tx)' }}>{meta.text}</p>
+                    <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--t-m)' }}>
+                      {item.botName}{item.workflowName ? ` · ${item.workflowName}` : ''}
+                    </p>
+                  </div>
+                  <span className="text-[10px] shrink-0 mt-0.5 font-medium" style={{ color: 'var(--t-m)' }}>
+                    {timeAgo(item.timestamp, t.timeAgo)}
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate" style={{ color: 'var(--t-tx)' }}>{meta.text}</p>
-                  <p className="text-[11px] truncate" style={{ color: 'var(--t-m)' }}>
-                    {item.botName}{item.workflowName ? ` · ${item.workflowName}` : ''}
-                  </p>
-                </div>
-                <span className="text-[10px] shrink-0 mt-0.5" style={{ color: 'var(--t-m)' }}>
-                  {timeAgo(item.timestamp, t.timeAgo)}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

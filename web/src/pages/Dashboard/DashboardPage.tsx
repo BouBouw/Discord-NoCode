@@ -247,15 +247,15 @@ export default function DashboardPage() {
     <div className="min-h-screen" style={{ background: 'var(--t-bg)' }}>
 
       {/* ── Page header ────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-10 h-14 flex items-center px-6" style={{ background: 'var(--t-s)', borderBottom: '1px solid var(--t-bd)' }}>
+      <header className="sticky top-0 z-10 h-16 flex items-center px-8" style={{ background: 'var(--t-s)', borderBottom: '1px solid var(--t-bd)' }}>
         <div className="w-full flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-1 text-[11px] mb-1" style={{ color: 'var(--t-m)' }}>
+            <div className="flex items-center gap-1 text-[10px] mb-1 font-medium" style={{ color: 'var(--t-m)' }}>
               <span>{t.dashboard.title}</span>
               <ChevronRight className="w-3 h-3" />
-              <span style={{ color: 'var(--t-sub)' }}>{t.dashboard.instances}</span>
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>{t.dashboard.instances}</span>
             </div>
-            <h1 className="text-sm font-semibold" style={{ color: 'var(--t-tx)' }}>{t.dashboard.instances}</h1>
+            <h1 className="text-base font-semibold" style={{ color: 'var(--t-tx)' }}>{t.dashboard.instances}</h1>
           </div>
           <button
             data-onboarding="create-bot"
@@ -299,10 +299,16 @@ export default function DashboardPage() {
         {/* ── Error banner ─────────────────────────────────────────── */}
         {errors > 0 && (
           <div
-            className="flex items-center gap-3 px-5 py-3 rounded-xl"
-            style={{ background: '#ef444412', border: '1px solid #ef444430' }}
+            className="flex items-center gap-3 px-5 py-3.5 rounded-xl"
+            style={{
+              background: 'rgba(239,68,68,0.06)',
+              border: '1px solid rgba(239,68,68,0.22)',
+              boxShadow: '0 0 0 1px rgba(239,68,68,0.06) inset',
+            }}
           >
-            <AlertCircle className="w-4 h-4 shrink-0" style={{ color: '#ef4444' }} />
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(239,68,68,0.12)' }}>
+              <AlertCircle className="w-3.5 h-3.5" style={{ color: '#ef4444' }} />
+            </div>
             <span className="text-xs font-medium flex-1" style={{ color: '#f87171' }}>
               {errors} {t.dashboard.errorBanner}
             </span>
@@ -331,29 +337,31 @@ export default function DashboardPage() {
         {/* ── Instances list ──────────────────────────────────────── */}
         <div data-onboarding="botlist" className="rounded-2xl overflow-hidden" style={{ background: 'var(--t-s)', border: '1px solid var(--t-bd)' }}>
           {/* Header row */}
-          <div className="flex items-center gap-2.5 px-6 py-4 flex-wrap" style={{ borderBottom: '1px solid var(--t-bd)' }}>
+          <div className="flex items-center gap-3 py-5 px-6 flex-wrap" style={{ borderBottom: '1px solid var(--t-bd)' }}>
             <h2 className="text-sm font-semibold" style={{ color: 'var(--t-tx)' }}>{t.dashboard.yourInstances}</h2>
-            <span className="px-1.5 py-0.5 text-[10px] rounded font-medium"
-              style={{ background: 'var(--t-s2)', color: 'var(--t-sub)' }}>
+            <span
+              className="px-2 py-0.5 text-[10px] rounded-full font-semibold"
+              style={{ background: 'rgba(134,134,172,0.12)', color: 'var(--t-a)' }}
+            >
               {bots.length}
             </span>
             <div className="flex-1" />
 
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--t-m)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--t-m)' }} />
               <input
                 type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 placeholder={t.dashboard.searchPlaceholder}
-                className="text-xs rounded-lg pl-7 pr-3 py-1.5 outline-none w-44"
+                className="text-xs rounded-xl pl-8 pr-3 py-2 outline-none w-44 transition-all duration-200"
                 style={{ background: 'var(--t-s2)', border: '1px solid var(--t-bd)', color: 'var(--t-tx)' }}
-                onFocus={e => (e.currentTarget.style.borderColor = 'var(--t-a)')}
+                onFocus={e => (e.currentTarget.style.borderColor = 'rgba(134,134,172,0.5)')}
                 onBlur={e => (e.currentTarget.style.borderColor = 'var(--t-bd)')}
               />
             </div>
 
-            {/* Filter tabs */}
-            <div className="flex rounded-lg overflow-hidden text-[11px] font-medium" style={{ border: '1px solid var(--t-bd)' }}>
+            {/* Filter tabs – pill style */}
+            <div className="flex gap-1 text-[11px] font-medium">
               {([
                 { key: 'all' as const, label: t.dashboard.filterAll },
                 { key: 'running' as const, label: t.dashboard.filterRunning },
@@ -361,18 +369,22 @@ export default function DashboardPage() {
                 { key: 'error' as const, label: t.dashboard.filterError },
               ]).map(f => (
                 <button key={f.key} onClick={() => setStatusFilter(f.key)}
-                  className="px-2.5 py-1 transition"
-                  style={{ background: statusFilter === f.key ? 'var(--t-aa)' : 'transparent', color: statusFilter === f.key ? 'var(--t-a)' : 'var(--t-m)' }}>
+                  className="px-3 py-1.5 rounded-xl transition-all duration-200"
+                  style={{
+                    background: statusFilter === f.key ? 'rgba(134,134,172,0.16)' : 'transparent',
+                    color: statusFilter === f.key ? 'var(--t-a)' : 'var(--t-m)',
+                    border: `1px solid ${statusFilter === f.key ? 'rgba(134,134,172,0.3)' : 'transparent'}`,
+                  }}>
                   {f.label}
                 </button>
               ))}
             </div>
 
             {/* Sort */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <ArrowUpDown className="w-3.5 h-3.5" style={{ color: 'var(--t-m)' }} />
               <select value={sortBy} onChange={e => setSortBy(e.target.value as 'name' | 'date' | 'status')}
-                className="text-[11px] rounded-lg px-2 py-1 outline-none cursor-pointer"
+                className="text-[11px] rounded-xl px-2.5 py-1.5 outline-none cursor-pointer transition-all duration-200"
                 style={{ background: 'var(--t-s2)', border: '1px solid var(--t-bd)', color: 'var(--t-sub)' }}>
                 <option value="name">{t.dashboard.sortName}</option>
                 <option value="date">{t.dashboard.sortDate}</option>
@@ -381,15 +393,15 @@ export default function DashboardPage() {
             </div>
 
             {/* View toggle */}
-            <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid var(--t-bd)' }}>
+            <div className="flex rounded-xl overflow-hidden gap-0.5 p-0.5" style={{ background: 'var(--t-s2)' }}>
               <button onClick={() => setViewMode('list')}
-                className="p-1.5 transition"
-                style={{ background: viewMode === 'list' ? 'var(--t-aa)' : 'transparent', color: viewMode === 'list' ? 'var(--t-a)' : 'var(--t-m)' }}>
+                className="p-1.5 rounded-lg transition-all duration-200"
+                style={{ background: viewMode === 'list' ? 'var(--t-s3)' : 'transparent', color: viewMode === 'list' ? '#FFFFFF' : 'var(--t-m)' }}>
                 <LayoutList className="w-3.5 h-3.5" />
               </button>
               <button onClick={() => setViewMode('grid')}
-                className="p-1.5 transition"
-                style={{ background: viewMode === 'grid' ? 'var(--t-aa)' : 'transparent', color: viewMode === 'grid' ? 'var(--t-a)' : 'var(--t-m)' }}>
+                className="p-1.5 rounded-lg transition-all duration-200"
+                style={{ background: viewMode === 'grid' ? 'var(--t-s3)' : 'transparent', color: viewMode === 'grid' ? '#FFFFFF' : 'var(--t-m)' }}>
                 <LayoutGrid className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -421,13 +433,15 @@ export default function DashboardPage() {
           )}
 
           {filteredBots.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-                style={{ background: 'var(--t-s2)', border: '1px solid var(--t-bd)' }}>
-                <BotIcon className="w-7 h-7" style={{ color: 'var(--t-m)' }} />
+            <div className="flex flex-col items-center justify-center py-24 text-center px-6">
+              <div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5"
+                style={{ background: 'rgba(134,134,172,0.08)', border: '1px solid rgba(134,134,172,0.16)' }}
+              >
+                <BotIcon className="w-10 h-10" style={{ color: 'var(--t-a)' }} />
               </div>
-              <h3 className="text-base font-semibold mb-1.5" style={{ color: 'var(--t-tx)' }}>{t.dashboard.noInstances}</h3>
-              <p className="text-xs mb-5 max-w-xs leading-relaxed" style={{ color: 'var(--t-m)' }}>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--t-tx)' }}>{t.dashboard.noInstances}</h3>
+              <p className="text-sm mb-6 max-w-xs leading-relaxed" style={{ color: 'var(--t-m)' }}>
                 {t.dashboard.noInstancesDesc}
               </p>
               <button
@@ -539,18 +553,22 @@ const StatusDonut = memo(function StatusDonut({
   let offset = 0;
 
   return (
-    <div className="rounded-2xl p-5 flex flex-col"
-      style={{ background: 'var(--t-s)', border: '1px solid var(--t-bd)', borderTop: '2px solid var(--t-a)' }}>
-      <h3 className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: 'var(--t-m)' }}>
-        {t.statusBreakdown}
-      </h3>
+    <div className="dnc-card p-5 flex flex-col" style={{ background: 'var(--t-s)', borderColor: 'var(--t-bd)' }}>
+      <div className="flex items-center gap-2.5 mb-4">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(134,134,172,0.12)' }}>
+          <Activity className="w-4 h-4" style={{ color: 'var(--t-a)' }} />
+        </div>
+        <h3 className="text-sm font-semibold" style={{ color: 'var(--t-tx)' }}>
+          {t.statusBreakdown}
+        </h3>
+      </div>
       <div className="flex items-center gap-6 flex-1">
         <svg width={100} height={100} viewBox="0 0 100 100" className="shrink-0">
           {total > 0 && segments.map((seg, i) => {
             const dash = (seg.value / total) * circ;
             const el = (
               <circle key={i} cx="50" cy="50" r={r} fill="none"
-                stroke={seg.value > 0 ? seg.color : 'transparent'}
+                stroke={seg.value > 0 ? seg.color : 'rgba(134,134,172,0.10)'}
                 strokeWidth={stroke} strokeLinecap="round"
                 strokeDasharray={`${dash} ${circ - dash}`}
                 strokeDashoffset={-offset}
@@ -561,16 +579,16 @@ const StatusDonut = memo(function StatusDonut({
             return el;
           })}
           <text x="50" y="50" textAnchor="middle" dominantBaseline="central"
-            style={{ fill: 'var(--t-tx)', fontSize: 16, fontWeight: 700 }}>
+            style={{ fill: 'var(--t-tx)', fontSize: 18, fontWeight: 700 }}>
             {running + stopped + errored}
           </text>
         </svg>
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {segments.map((seg, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: seg.color }} />
+            <div key={i} className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: seg.color }} />
               <span className="text-xs" style={{ color: 'var(--t-sub)' }}>{seg.label}</span>
-              <span className="text-xs font-bold ml-auto" style={{ color: seg.color }}>{seg.value}</span>
+              <span className="text-xs font-bold ml-auto pl-3" style={{ color: seg.color }}>{seg.value}</span>
             </div>
           ))}
         </div>
@@ -588,18 +606,38 @@ const StatCard = memo(function StatCard({
   sub: string; accent: string;
 }) {
   return (
-    <div className="rounded-2xl p-5 flex flex-col justify-between gap-4"
-      style={{ background: 'var(--t-s)', border: '1px solid var(--t-bd)', borderTop: `2px solid ${accent}` }}>
-      <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: `${accent}12`, color: accent }}>
+    <div
+      className="rounded-2xl p-6 flex flex-col justify-between gap-4 relative overflow-hidden transition-all duration-200"
+      style={{ background: 'var(--t-s)', border: '1px solid var(--t-bd)', boxShadow: 'var(--shadow-md)' }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-lg), 0 0 0 1px rgba(134,134,172,0.22)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(134,134,172,0.3)';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--t-bd)';
+      }}
+    >
+      {/* Decorative corner gradient */}
+      <div
+        className="absolute bottom-0 right-0 w-24 h-24 rounded-tl-full pointer-events-none"
+        style={{ background: `${accent}`, opacity: 0.06 }}
+      />
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: `${accent}1F`, color: accent }}>
           {icon}
         </div>
-        <span className="text-xs font-medium" style={{ color: 'var(--t-sub)' }}>{title}</span>
+        <span
+          className="text-xs font-medium uppercase tracking-wider"
+          style={{ color: 'var(--t-m)' }}
+        >
+          {title}
+        </span>
       </div>
       <div>
-        <p className="text-3xl font-bold leading-none tracking-tight" style={{ color: 'var(--t-tx)' }}>{value}</p>
-        <p className="text-xs mt-1.5" style={{ color: 'var(--t-m)' }}>{sub}</p>
+        <p className="text-4xl font-bold leading-none tracking-tight" style={{ color: 'var(--t-tx)' }}>{value}</p>
+        <p className="text-xs mt-2" style={{ color: 'var(--t-m)' }}>{sub}</p>
       </div>
     </div>
   );
@@ -619,28 +657,28 @@ const BotItem = memo(function BotItem({ bot, loading, selected, onToggleSelect, 
 
   return (
     <div
-      className="flex items-center justify-between px-6 py-5 transition-colors group"
-      style={{ borderBottom: '1px solid var(--t-bd)', background: selected ? 'var(--t-aa)' : undefined }}
-      onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'var(--t-s2)'; }}
+      className="flex items-center justify-between px-6 py-4 transition-all duration-200 group"
+      style={{ borderBottom: '1px solid var(--t-bd)', background: selected ? 'rgba(134,134,172,0.08)' : undefined }}
+      onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'rgba(134,134,172,0.04)'; }}
       onMouseLeave={e => { if (!selected) e.currentTarget.style.background = 'transparent'; }}
     >
       {/* Left: checkbox + avatar + info */}
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center gap-3.5 min-w-0">
         {onToggleSelect && (
-          <button onClick={onToggleSelect} className="shrink-0" style={{ color: selected ? 'var(--t-a)' : 'var(--t-m)' }}>
+          <button onClick={onToggleSelect} className="shrink-0 transition-colors duration-200" style={{ color: selected ? 'var(--t-a)' : 'var(--t-m)' }}>
             {selected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
           </button>
         )}
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 relative"
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 relative"
           style={{ background: 'var(--t-s2)', border: `1px solid ${st.border}` }}>
-          <BotIcon className="w-5 h-5" style={{ color: 'var(--t-a)' }} />
-          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2"
+          <BotIcon className="w-4 h-4" style={{ color: 'var(--t-a)' }} />
+          <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border-2"
               style={{ background: st.dot, borderColor: 'var(--t-s)' }} />
         </div>
         <div className="min-w-0">
           <p className="text-sm font-semibold truncate" style={{ color: 'var(--t-tx)' }}>{bot.name}</p>
-          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full"
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full"
               style={{ background: st.bg, color: st.text, border: `1px solid ${st.border}` }}>
               <Circle className="w-1.5 h-1.5 fill-current" />
               {statusLabel}
@@ -651,13 +689,13 @@ const BotItem = memo(function BotItem({ bot, loading, selected, onToggleSelect, 
         </div>
       </div>
 
-      {/* Right: actions (always visible) */}
+      {/* Right: actions */}
       <div className="flex items-center gap-1 shrink-0 ml-3">
         <IconBtn onClick={onInstance} title={t.dashboard.viewInstance} color="var(--t-a)" hoverBg="var(--t-aa)">
           <ExternalLink className="w-3.5 h-3.5" />
         </IconBtn>
 
-        <TextBtn onClick={onOpen} disabled={busy} loading={isOpening} color="var(--t-a)" bg="var(--t-aa)" hoverBg="var(--t-aa)">
+        <TextBtn onClick={onOpen} disabled={busy} loading={isOpening} color="var(--t-a)" bg="rgba(134,134,172,0.12)" hoverBg="var(--t-aa)">
           {t.dashboard.workflow}
         </TextBtn>
 
@@ -692,28 +730,44 @@ const BotGridCard = memo(function BotGridCard({ bot, loading, selected, onToggle
   const statusLabel = t.status[bot.status as keyof typeof t.status] ?? t.status.idle;
 
   return (
-    <div className="rounded-xl p-4 flex flex-col gap-3 transition-colors relative"
-      style={{ background: selected ? 'var(--t-aa)' : 'var(--t-s2)', border: `1px solid ${selected ? 'var(--t-a)' : 'var(--t-bd)'}` }}>
+    <div
+      className="rounded-2xl p-4 flex flex-col gap-3 transition-all duration-200 relative overflow-hidden"
+      style={{
+        background: selected ? 'rgba(134,134,172,0.1)' : 'var(--t-s2)',
+        border: `1px solid ${selected ? 'rgba(134,134,172,0.4)' : 'var(--t-bd)'}`,
+        boxShadow: 'var(--shadow-sm)',
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(134,134,172,0.28)';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)';
+        (e.currentTarget as HTMLElement).style.borderColor = selected ? 'rgba(134,134,172,0.4)' : 'var(--t-bd)';
+      }}
+    >
       {onToggleSelect && (
-        <button onClick={onToggleSelect} className="absolute top-3 right-3"
+        <button onClick={onToggleSelect} className="absolute top-3 right-3 transition-colors duration-200"
           style={{ color: selected ? 'var(--t-a)' : 'var(--t-m)' }}>
           {selected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
         </button>
       )}
       <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 relative"
           style={{ background: 'var(--t-s)', border: `1px solid ${st.border}` }}>
-          <BotIcon className="w-4.5 h-4.5" style={{ color: 'var(--t-a)' }} />
+          <BotIcon className="w-4 h-4" style={{ color: 'var(--t-a)' }} />
+          <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border-2"
+            style={{ background: st.dot, borderColor: 'var(--t-s2)' }} />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 pr-6">
           <p className="text-sm font-semibold truncate" style={{ color: 'var(--t-tx)' }}>{bot.name}</p>
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full mt-0.5"
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full mt-1"
             style={{ background: st.bg, color: st.text, border: `1px solid ${st.border}` }}>
             <Circle className="w-1.5 h-1.5 fill-current" /> {statusLabel}
           </span>
         </div>
       </div>
-      <div className="flex items-center gap-1 mt-auto">
+      <div className="flex items-center gap-1 mt-auto pt-1" style={{ borderTop: '1px solid var(--t-bd)' }}>
         <IconBtn onClick={onInstance} title={t.dashboard.viewInstance} color="var(--t-a)" hoverBg="var(--t-aa)">
           <ExternalLink className="w-3.5 h-3.5" />
         </IconBtn>
